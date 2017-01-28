@@ -2,10 +2,10 @@
 
 namespace Mindlahus\SymfonyAssets\Service;
 
-use Mindlahus\SymfonyAssets\AbstractInterface\DownloadAbstract;
+use Mindlahus\SymfonyAssets\Traits\DownloadTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class DownloadService extends DownloadAbstract
+class DownloadService
 {
     public $container;
 
@@ -14,34 +14,5 @@ class DownloadService extends DownloadAbstract
         $this->container = $container;
     }
 
-    /**
-     * @param string $path
-     * @param string|null $name
-     * @param bool $deleteOnCompleted
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
-     */
-    public function execute(string $path, string $name = null, $deleteOnCompleted = true)
-    {
-        return parent::execute($path, $name, $deleteOnCompleted);
-    }
-
-    /**
-     * @param string $path
-     * @param string $octetStream
-     * @return string
-     */
-    public function octetStreamToTmp(string $path, string $octetStream)
-    {
-        return parent::octetStreamToTmp($path, $octetStream);
-    }
-
-    /**
-     * @param string|null $type
-     * @param bool|null $flip
-     * @return array|mixed|null
-     */
-    public function _getMimeType(string $type = null, bool $flip = null)
-    {
-        return parent::_getMimeType($type, $flip);
-    }
+    use DownloadTrait;
 }

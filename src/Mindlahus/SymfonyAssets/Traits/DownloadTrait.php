@@ -1,11 +1,12 @@
 <?php
 
-namespace Mindlahus\SymfonyAssets\AbstractInterface;
+namespace Mindlahus\SymfonyAssets\Traits;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
-abstract class DownloadAbstract
+trait DownloadTrait
 {
     /**
      * @param string $path
@@ -13,13 +14,13 @@ abstract class DownloadAbstract
      * @param bool $deleteOnCompleted
      * @return BinaryFileResponse
      */
-    public function execute(string $path, string $name = null, $deleteOnCompleted = true)
+    public static function execute(string $path, string $name = null, $deleteOnCompleted = true)
     {
         $name = $name ?: pathinfo($path, PATHINFO_BASENAME);
         $response = new BinaryFileResponse($path);
 
         $response->setStatusCode(200);
-        $response->headers->set('Content-Type', $this->_getMimeType(pathinfo($name, PATHINFO_EXTENSION)));
+        $response->headers->set('Content-Type', static::_getMimeType(pathinfo($name, PATHINFO_EXTENSION)));
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $name
@@ -35,11 +36,28 @@ abstract class DownloadAbstract
     }
 
     /**
+     * @param StreamedResponse $response
+     * @param string $fileName
+     * @return StreamedResponse
+     */
+    public static function streamResponse(StreamedResponse $response, string $fileName)
+    {
+        $response->setStatusCode(200);
+        $response->headers->set('Content-Type', 'application/force-download');
+        $response->headers->set('Content-Disposition', '"attachment; filename=' . $fileName . ';"');
+        // used for debug
+        // $response->sendContent();
+        $response->send();
+
+        return $response;
+    }
+
+    /**
      * @param string $path
      * @param string $octetStream
      * @return string
      */
-    public function octetStreamToTmp(string $path, string $octetStream)
+    public static function octetStreamToTmp(string $path, string $octetStream)
     {
         /**
          * make sure the directory exists to avoid errors
@@ -55,7 +73,7 @@ abstract class DownloadAbstract
      * @param bool|null $flip
      * @return array|mixed|null
      */
-    public function _getMimeType(string $type = null, bool $flip = null)
+    public static function _getMimeType(string $type = null, bool $flip = null)
     {
         $mime_types_map = array(
             '123' => 'application/vnd.lotus-1-2-3',
