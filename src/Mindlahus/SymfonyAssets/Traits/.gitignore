@@ -3,4 +3,5 @@
 !.gitignore
 !CommandTrait.php
 !DownloadTrait.php
+!ExportTrait.php
 !TestTrait.php
