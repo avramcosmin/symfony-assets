@@ -16,6 +16,6 @@ Just add the following lines inside `app/config/services.yml`:
         class: Mindlahus\SymfonyAssets\Service\DownloadService
         arguments: ["@service_container"]
     mindlahus.v1.export_service:
-        class: Mindlahus\SymfonyAssets\Service\DownloadService
+        class: Mindlahus\SymfonyAssets\Service\ExportService
         arguments: ["@service_container"]
 ```
