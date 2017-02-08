@@ -1,7 +1,8 @@
 <?php
 
-namespace Mindlahus\SymfonyAssets\Exception;
+namespace Mindlahus\SymfonyAssets\EventListener;
 
+use Mindlahus\SymfonyAssets\Exception\ValidationFailedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;

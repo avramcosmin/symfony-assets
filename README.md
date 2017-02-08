@@ -1,4 +1,4 @@
-# Symfony Assets v.1.0.4
+# Symfony Assets v.1.0.5
 
 A list of PHP classes that will help you develop fast & easy various API's.
 
@@ -19,8 +19,8 @@ Just add the following lines inside `app/config/services.yml`:
     mindlahus.v1.export_service:
         class: Mindlahus\SymfonyAssets\Service\ExportService
         arguments: ["@service_container"]
-    mindlahus.v2.exception_listener:
-            class: Mindlahus\EventListener\ExceptionListener
+    mindlahus.v1.exception_listener:
+            class: Mindlahus\SymfonyAssets\EventListener\ExceptionListener
             tags:
                 - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 ```
