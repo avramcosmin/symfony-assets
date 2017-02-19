@@ -6,6 +6,7 @@ services:
         class: Mindlahus\SymfonyAssets\Listener\DoctrineExtensionListener
         calls:
             - [ setContainer, [ "@service_container" ] ]
+            - [ setUserRepository, [ "UserV1Bundle:User" ] ]
         tags:
             # loggable hooks user username if one is in security context
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }

@@ -1,4 +1,4 @@
-# Symfony Assets v.1.0.6
+# Symfony Assets v.1.0.7
 
 A list of PHP classes that will help you develop fast & easy various API's.
 
@@ -56,6 +56,7 @@ To connect the listener to your app, just `copy/paste` the following snippet.
         class: Mindlahus\SymfonyAssets\Listener\DoctrineExtensionListener
         calls:
             - [ setContainer, [ "@service_container" ] ]
+            - [ setUserRepository, [ "UserV1Bundle:User" ] ]
         tags:
             # loggable hooks user username if one is in security context
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
