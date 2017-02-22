@@ -123,6 +123,7 @@ class EntityRepositoryHelper
      */
     public static function _matrixIncrementTotal(&$r, $t, $y_key, $x_key)
     {
+        $t = $t + 0;
         $r['y_x'][$y_key][$x_key] = (!isset($r['y_x'][$y_key][$x_key])
             ? $t
             : $r['y_x'][$y_key][$x_key] + $t);
