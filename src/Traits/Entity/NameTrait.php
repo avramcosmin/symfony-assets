@@ -12,8 +12,9 @@ trait NameTrait
      * @Serializer\Expose()
      * @Serializer\Groups({"first-name", "name", "name-all"})
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=20)
      * @Assert\NotBlank()
+     * @Assert\Length(max=20)
      */
     private $firstName;
 
@@ -23,8 +24,9 @@ trait NameTrait
      * @Serializer\Expose()
      * @Serializer\Groups({"last-name", "name", "name-all"})
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=20)
      * @Assert\NotBlank()
+     * @Assert\Length(max=20)
      */
     private $lastName;
 
