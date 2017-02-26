@@ -36,7 +36,7 @@ trait NameTrait
      * @Serializer\Expose()
      * @Serializer\Groups({"first-last-name", "name-full", "name-all"})
      *
-     * @ORM\Column(type="string", length=511)
+     * @ORM\Column(type="string", length=41)
      * @Assert\NotBlank()
      */
     private $firstLastName;
@@ -47,7 +47,7 @@ trait NameTrait
      * @Serializer\Expose()
      * @Serializer\Groups({"last-first-name", "name-full", "name-all"})
      *
-     * @ORM\Column(type="string", length=511)
+     * @ORM\Column(type="string", length=41)
      * @Assert\NotBlank()
      */
     private $lastFirstName;
