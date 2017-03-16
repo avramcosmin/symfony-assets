@@ -59,7 +59,7 @@ trait CryptoTrait
         $str = StringHelper::base64url_encode((object)array_merge($payload, [
             'expires' => $expires,
             'created' => time()
-        ]));
+        ]), true);
 
         return StringHelper::base64url_encode($cipher->encrypt($str), true);
     }
@@ -74,6 +74,6 @@ trait CryptoTrait
         $cipher = new AES();
         $cipher->setKey($key);
 
-        return StringHelper::base64url_encode($cipher->decrypt(StringHelper::base64url_decode($str, true)));
+        return StringHelper::base64url_decode($cipher->decrypt(StringHelper::base64url_decode($str, true)), true);
     }
 }
