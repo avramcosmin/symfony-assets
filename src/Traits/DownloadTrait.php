@@ -69,6 +69,9 @@ trait DownloadTrait
     }
 
     /**
+     * http://camendesign.co.uk/code/uth4_mime-type/mime-types.php
+     * https://gist.github.com/plasticbrain/3887245
+     *
      * @param string|null $type
      * @param bool|null $flip
      * @return array|mixed|null

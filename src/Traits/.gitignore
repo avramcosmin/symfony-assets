@@ -2,6 +2,7 @@
 !Entity
 !.gitignore
 !CommandTrait.php
+!CryptoTrait.php
 !DownloadTrait.php
 !ExportTrait.php
 !TestTrait.php

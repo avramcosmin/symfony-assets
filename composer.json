@@ -12,7 +12,8 @@
         "friendsofsymfony/rest-bundle": "^2.1",
         "jms/serializer-bundle": "^1.1",
         "nelmio/cors-bundle": "^1.4",
-        "gedmo/doctrine-extensions": "^2.4"
+        "gedmo/doctrine-extensions": "^2.4",
+        "phpseclib/phpseclib": "~2.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.2",
