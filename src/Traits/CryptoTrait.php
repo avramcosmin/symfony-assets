@@ -74,6 +74,6 @@ trait CryptoTrait
         $cipher = new AES();
         $cipher->setKey($key);
 
-        return StringHelper::base64url_decode($cipher->decrypt(StringHelper::base64url_decode($str, true)));
+        return StringHelper::base64url_decode($cipher->decrypt(StringHelper::base64url_decode($str)), true);
     }
 }
