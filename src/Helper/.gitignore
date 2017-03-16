@@ -1,6 +1,7 @@
 /*
 !.gitignore
 !ControllerHelper.php
+!CryptoHelper.php
 !DownloadHelper.php
 !EntityHelper.php
 !EntityRepositoryHelper.php
