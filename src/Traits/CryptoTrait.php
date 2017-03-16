@@ -61,7 +61,7 @@ trait CryptoTrait
             'created' => time()
         ]), true);
 
-        return StringHelper::base64url_encode($cipher->encrypt($str), true);
+        return StringHelper::base64url_encode($cipher->encrypt($str));
     }
 
     /**
@@ -74,6 +74,6 @@ trait CryptoTrait
         $cipher = new AES();
         $cipher->setKey($key);
 
-        return StringHelper::base64url_decode($cipher->decrypt(StringHelper::base64url_decode($str, true)), true);
+        return StringHelper::base64url_decode($cipher->decrypt(StringHelper::base64url_decode($str, true)));
     }
 }
