@@ -1,4 +1,4 @@
-# Symfony Assets v.1.0.7
+# Symfony Assets
 
 A list of PHP classes that will help you develop fast & easy various API's.
 
