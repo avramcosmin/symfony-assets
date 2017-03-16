@@ -55,10 +55,11 @@ trait CryptoTrait
     {
         $cipher = new AES();
         $cipher->setKey($key);
+        $exp = new \DateTime("+${expires} seconds");
 
-        $str = StringHelper::base64url_encode((object)array_merge($payload, [
-            'expires' => $expires,
-            'created' => time()
+        $str = StringHelper::base64url_encode(array_merge($payload, [
+            'exp' => $exp->getTimestamp(),
+            'iat' => time()
         ]), true);
 
         return StringHelper::base64url_encode($cipher->encrypt($str));
