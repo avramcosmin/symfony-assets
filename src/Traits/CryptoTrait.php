@@ -49,7 +49,7 @@ trait CryptoTrait
      * @param array $payload
      * @param string $key
      * @param int $expires
-     * @return string
+     * @return string Encrypted array
      */
     public static function encrypt(array $payload, string $key, int $expires = 300)
     {
@@ -68,7 +68,7 @@ trait CryptoTrait
     /**
      * @param string $str
      * @param string $key
-     * @return string
+     * @return array Encrypted with $this->encrypt()
      */
     public static function decrypt(string $str, string $key)
     {
