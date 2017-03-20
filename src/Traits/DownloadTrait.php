@@ -77,7 +77,8 @@ trait DownloadTrait
      * @param ViewHandler $viewHandler
      * @param string $encryptionKey
      * @param string|null $filePath
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
+     * @throws \Exception
      */
     public static function jwtGetDownloadToken(
         Request $request,
@@ -87,6 +88,11 @@ trait DownloadTrait
     )
     {
         $filePath = $filePath ?? $request->request->get('filePath');
+
+        if(!is_string($filePath) && !file_exists($filePath)) {
+            throw new \Exception('Invalid file path. String of valid file path expected.');
+        }
+
         $jwt = str_replace('Bearer ', '', $request->headers->get('Authorization'));
         return ControllerHelper::Serialize(
             CryptoHelper::encrypt(
