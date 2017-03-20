@@ -79,7 +79,7 @@ trait DownloadTrait
      * @param string|null $filePath
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function jwtGetDownloadToken(
+    public static function jwtGetDownloadToken(
         Request $request,
         ViewHandler $viewHandler,
         string $encryptionKey,
@@ -105,13 +105,13 @@ trait DownloadTrait
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Exception
      */
-    public function jwtForceDownload(array $decryptedToken)
+    public static function jwtForceDownload(array $decryptedToken)
     {
         if (time() > $decryptedToken['exp']) {
             throw new \Exception('Invalid download session!');
         }
 
-        return $this->execute(
+        return static::execute(
             $decryptedToken['file_path'],
             null,
             true
