@@ -65,15 +65,15 @@ trait ExportTrait
         try {
             shell_exec(
                 'bash '
-                . '../../../../bin/database-dumper.sh'
+                . dirname(__DIR__) . '/../../../bin/database-dumper.sh'
                 . ' -d ' . $options['database_name']
                 . ' -u ' . $options['database_user']
-                . ' -p ' . $options['database_password']
+                . ' -p\'' . $options['database_password'] . '\''
                 . ' -e ' . $options['export_as']
-                . ' -dist ' . $options['dist_dir']
-                . ' -tmp ' . $options['tmp_dir']
-                . ' -name ' . $options['archive_name']
-                . ' -prefixes ' . implode('|', $options['allowed_table_prefixes'])
+                . ' --dist ' . $options['dist_dir']
+                . ' --tmp ' . $options['tmp_dir']
+                . ' --name ' . $options['archive_name']
+                . ' --prefixes ' . implode('|', $options['allowed_table_prefixes'])
             );
         } catch (\Throwable $e) {
             throw new \Exception('Failed to executing `database-dumper.sh`.', 0, $e);
@@ -90,7 +90,12 @@ trait ExportTrait
                 $ext = '';
         }
 
-        return $options['dist_dir'] . $options['archive_name'] . $ext;
+        $filePath = $options['dist_dir'] . $options['archive_name'] . $ext;
+        if (!file_exists($filePath)) {
+            throw new \Exception('Database Dump failed. No dump file!');
+        }
+
+        return $filePath;
     }
 
     /**
