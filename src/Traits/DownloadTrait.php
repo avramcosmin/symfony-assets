@@ -3,6 +3,7 @@
 namespace Mindlahus\SymfonyAssets\Traits;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -36,11 +37,11 @@ trait DownloadTrait
     }
 
     /**
-     * @param StreamedResponse $response
+     * @param Response $response
      * @param string $fileName
-     * @return StreamedResponse
+     * @return Response
      */
-    public static function streamResponse(StreamedResponse $response, string $fileName)
+    public static function streamResponse(Response $response, string $fileName)
     {
         $response->setStatusCode(200);
         $response->headers->set('Content-Type', 'application/force-download');

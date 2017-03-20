@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ExportService
 {
+    /**
+     * @var ContainerInterface
+     */
     public $container;
 
     public function __construct(ContainerInterface $container)
@@ -15,4 +18,12 @@ class ExportService
     }
 
     use ExportTrait;
+
+    /**
+     * @return ContainerInterface
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
 }
