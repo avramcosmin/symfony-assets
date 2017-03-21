@@ -89,19 +89,21 @@ trait DownloadTrait
     {
         $filePath = $filePath ?? $request->request->get('filePath');
 
-        if(!is_string($filePath) && !file_exists($filePath)) {
+        if (!is_string($filePath) && !file_exists($filePath)) {
             throw new \Exception('Invalid file path. String of valid file path expected.');
         }
 
         $jwt = str_replace('Bearer ', '', $request->headers->get('Authorization'));
         return ControllerHelper::Serialize(
-            CryptoHelper::encrypt(
-                [
-                    'file_path' => $filePath,
-                    'jwt' => $jwt
-                ],
-                $encryptionKey
-            ),
+            [
+                'token' => CryptoHelper::encrypt(
+                    [
+                        'file_path' => $filePath,
+                        'jwt' => $jwt
+                    ],
+                    $encryptionKey
+                )
+            ],
             $viewHandler
         );
     }
