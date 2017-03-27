@@ -2,10 +2,10 @@
 
 namespace Mindlahus\SymfonyAssets\Service;
 
-use Mindlahus\SymfonyAssets\Traits\ExportTrait;
+use Mindlahus\SymfonyAssets\Traits\DatabaseExportTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ExportService
+class DatabaseExportService
 {
     /**
      * @var ContainerInterface
@@ -17,7 +17,7 @@ class ExportService
         $this->container = $container;
     }
 
-    use ExportTrait;
+    use DatabaseExportTrait;
 
     /**
      * @return ContainerInterface

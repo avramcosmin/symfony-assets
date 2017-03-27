@@ -3,6 +3,6 @@
 !.gitignore
 !CommandTrait.php
 !CryptoTrait.php
+!DatabaseExportTrait.php
 !DownloadTrait.php
-!ExportTrait.php
 !TestTrait.php

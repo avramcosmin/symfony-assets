@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-trait ExportTrait
+trait DatabaseExportTrait
 {
     /**
      * $options = [
@@ -123,7 +123,7 @@ trait ExportTrait
      * @param array $header
      * @param array $cols
      * @param string $fileName
-     * @return StreamedResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public static function inMemoryEntitiesToCSV(Query $entities, array $header, array $cols, string $fileName)
     {
