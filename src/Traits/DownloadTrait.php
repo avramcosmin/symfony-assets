@@ -136,7 +136,7 @@ trait DownloadTrait
 
         return static::execute(
             $decryptedToken['file_path'],
-            null,
+            $decryptedToken['file_name'] ?? null,
             true
         );
     }
