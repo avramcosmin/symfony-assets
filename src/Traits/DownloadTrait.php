@@ -18,13 +18,19 @@ trait DownloadTrait
      * @param bool $deleteOnCompleted
      * @return BinaryFileResponse
      */
-    public static function execute(string $path, string $name = null, $deleteOnCompleted = true)
+    public static function execute(
+        string $path,
+        string $name = null,
+        bool $deleteOnCompleted = true)
     {
         $name = $name ?: pathinfo($path, PATHINFO_BASENAME);
         $response = new BinaryFileResponse($path);
 
         $response->setStatusCode(200);
-        $response->headers->set('Content-Type', static::_getMimeType(pathinfo($name, PATHINFO_EXTENSION)));
+        $response->headers->set(
+            'Content-Type',
+            static::_getMimeType(pathinfo($name, PATHINFO_EXTENSION))
+        );
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $name
@@ -47,8 +53,14 @@ trait DownloadTrait
     public static function streamResponse(Response $response, string $fileName)
     {
         $response->setStatusCode(200);
-        $response->headers->set('Content-Type', 'application/force-download');
-        $response->headers->set('Content-Disposition', '"attachment; filename=' . $fileName . ';"');
+        $response->headers->set(
+            'Content-Type',
+            'application/force-download'
+        );
+        $response->headers->set(
+            'Content-Disposition',
+            '"attachment; filename=' . $fileName . ';"'
+        );
         // used for debug
         // $response->sendContent();
         $response->send();
@@ -75,7 +87,8 @@ trait DownloadTrait
     /**
      * $tokenContent = [
      *  file_path           optional if ignore_file_path set boolean true
-     *  ignore_file_path    optional
+     *  file_name           optional
+     *  direct_input        optional
      * ]
      *
      * @param Request $request
@@ -84,7 +97,6 @@ trait DownloadTrait
      * @param array $tokenContent
      * @return Response
      * @throws \Exception
-     * @internal param null|string $filePath
      */
     public static function jwtGetDownloadToken(
         Request $request,
@@ -93,15 +105,16 @@ trait DownloadTrait
         array $tokenContent = []
     )
     {
-        if (!isset($tokenContent['file_path']) && $request->request->has('filePath')) {
-            $tokenContent['file_path'] = $request->request->get('filePath');
-        }
+        $tokenContent = array_merge($request->request->all(), $tokenContent);
 
-        if (!is_string($tokenContent['file_path'])
+        if (
+            ($tokenContent['direct_input'] ?? null) !== true
             &&
-            !file_exists($tokenContent['file_path'])
-            &&
-            ($tokenContent['ignore_file_path'] ?? null) !== true
+            (
+                !is_string($tokenContent['file_path'])
+                ||
+                !file_exists($tokenContent['file_path'])
+            )
         ) {
             throw new \Exception('Invalid file path. String of valid file path expected.');
         }
@@ -130,15 +143,36 @@ trait DownloadTrait
      */
     public static function jwtForceDownload(array $decryptedToken)
     {
-        if (time() > $decryptedToken['exp']) {
-            throw new \Exception('Invalid download session!');
-        }
+        static::jwtIsValidSession($decryptedToken);
 
         return static::execute(
             $decryptedToken['file_path'],
             $decryptedToken['file_name'] ?? null,
             true
         );
+    }
+
+    /**
+     * @param Response $response
+     * @param array $decryptedToken
+     * @return Response
+     */
+    public static function jwtStreamDownload(Response $response, array $decryptedToken)
+    {
+        static::jwtIsValidSession($decryptedToken);
+
+        return static::streamResponse($response, $decryptedToken['file_name']);
+    }
+
+    /**
+     * @param array $decryptedToken
+     * @throws \Exception
+     */
+    public static function jwtIsValidSession(array $decryptedToken)
+    {
+        if (time() > $decryptedToken['exp']) {
+            throw new \Exception('Invalid download session!');
+        }
     }
 
     /**
