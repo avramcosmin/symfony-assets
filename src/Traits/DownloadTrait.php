@@ -73,23 +73,36 @@ trait DownloadTrait
     }
 
     /**
+     * $tokenContent = [
+     *  file_path           optional if ignore_file_path set boolean true
+     *  ignore_file_path    optional
+     * ]
+     *
      * @param Request $request
      * @param ViewHandler $viewHandler
      * @param string $encryptionKey
-     * @param string|null $filePath
+     * @param array $tokenContent
      * @return Response
      * @throws \Exception
+     * @internal param null|string $filePath
      */
     public static function jwtGetDownloadToken(
         Request $request,
         ViewHandler $viewHandler,
         string $encryptionKey,
-        string $filePath = null
+        array $tokenContent = []
     )
     {
-        $filePath = $filePath ?? $request->request->get('filePath');
+        if (!isset($tokenContent['file_path']) && $request->request->has('filePath')) {
+            $tokenContent['file_path'] = $request->request->get('filePath');
+        }
 
-        if (!is_string($filePath) && !file_exists($filePath)) {
+        if (!is_string($tokenContent['file_path'])
+            &&
+            !file_exists($tokenContent['file_path'])
+            &&
+            ($tokenContent['ignore_file_path'] ?? null) !== true
+        ) {
             throw new \Exception('Invalid file path. String of valid file path expected.');
         }
 
@@ -97,10 +110,12 @@ trait DownloadTrait
         return ControllerHelper::Serialize(
             [
                 'token' => CryptoHelper::encrypt(
-                    [
-                        'file_path' => $filePath,
-                        'jwt' => $jwt
-                    ],
+                    array_merge(
+                        [
+                            'jwt' => $jwt
+                        ],
+                        $tokenContent
+                    ),
                     $encryptionKey
                 )
             ],
