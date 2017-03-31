@@ -14,6 +14,9 @@ trait VariablesMapTrait
     ];
 
     /**
+     * http://camendesign.co.uk/code/uth4_mime-type/mime-types.php
+     * https://gist.github.com/plasticbrain/3887245
+     *
      * @var array
      */
     private static $mimeTypesMap = [

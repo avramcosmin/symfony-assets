@@ -174,17 +174,4 @@ trait DownloadTrait
             throw new \Exception('Invalid download session!');
         }
     }
-
-    /**
-     * http://camendesign.co.uk/code/uth4_mime-type/mime-types.php
-     * https://gist.github.com/plasticbrain/3887245
-     *
-     * @param string $mimeType
-     * @param bool|null $flip
-     * @return null|string
-     */
-    public static function getMimeType(string $mimeType, bool $flip = null)
-    {
-        return VariablesMapTrait::getMimeType($mimeType, $flip);
-    }
 }
