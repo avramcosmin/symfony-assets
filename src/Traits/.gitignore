@@ -1,8 +1,14 @@
 /*
 !Entity
+!Exception
 !.gitignore
 !CommandTrait.php
+!ControllerTrait.php
 !CryptoTrait.php
 !DatabaseExportTrait.php
 !DownloadTrait.php
+!GlobalTrait.php
+!StringTrait.php
 !TestTrait.php
+!UploadTrait.php
+!VariablesMapTrait.php

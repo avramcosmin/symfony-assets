@@ -2,15 +2,9 @@
 
 namespace Mindlahus\SymfonyAssets\Helper;
 
+use Mindlahus\SymfonyAssets\Traits\GlobalTrait;
+
 class GlobalHelper
 {
-    /**
-     * @param $givenInstance
-     * @param $expectedInstance
-     * @return bool
-     */
-    public static function isInstanceOf($givenInstance, $expectedInstance)
-    {
-        return $givenInstance instanceof $expectedInstance;
-    }
+    use GlobalTrait;
 }

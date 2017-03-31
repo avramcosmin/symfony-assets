@@ -20,7 +20,11 @@ class ReconcileNameCommand extends ContainerAwareCommand
         $this
             ->setName('mindlahus:v2:reconcile:name')
             ->setDescription('Reconciles First Last & Last First names from the database.')
-            ->addArgument('repository', InputArgument::OPTIONAL, 'The entity of witch First & Last name combination you want to reconcile.');
+            ->addArgument(
+                'repository',
+                InputArgument::OPTIONAL,
+                'The entity of witch First & Last name combination you want to reconcile.'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

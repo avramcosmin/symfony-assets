@@ -164,7 +164,12 @@ trait CommandTrait
      * @param string $callback
      * @param array $options
      */
-    private function _executeReconciliation(OutputInterface $output, string $repository, string $callback, array $options = [])
+    private function _executeReconciliation(
+        OutputInterface $output,
+        string $repository,
+        string $callback,
+        array $options = []
+    )
     {
         gc_enable();
         $this->_init();
@@ -192,10 +197,28 @@ trait CommandTrait
                     if (($options['usingIterate'] ?? true) === true) {
                         $entity = $entity[0];
                     }
+                    /**
+                     * todo : replace with the suggested approach
+                     *
+                     * if (
+                     * method_exists($this, 'entityExistsCallback')
+                     * &&
+                     * $this->{'entityExistsCallback'}($output, $entity)
+                     * ) {
+                     * continue;
+                     * }
+                     */
                     if (($options['existsCallback'] ?? null) && $this->{$options['existsCallback']}($output, $entity)) {
                         continue;
                     }
                     $this->{$callback}($entity);
+                    /**
+                     * todo : replace with the suggested approach
+                     * if (method_exists($this, 'entityExistsCallback')) {
+                     * $this->{'entityPersistCallback'}($entity);
+                     * $this->em->persist($entity);
+                     * }
+                     */
                     if ($options['persistCallback'] ?? null) {
                         $entity = $this->{$options['persistCallback']}($entity);
                         $this->em->persist($entity);
