@@ -29,7 +29,7 @@ trait DownloadTrait
         $response->setStatusCode(200);
         $response->headers->set(
             'Content-Type',
-            static::getMimeType(pathinfo($name, PATHINFO_EXTENSION))
+            VariablesMapTrait::getMimeType(pathinfo($name, PATHINFO_EXTENSION))
         );
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
