@@ -21,6 +21,9 @@ trait EntityTrait
     }
 
     /**
+     * This helper method allows one to ignore the Time Zone reported by MySQL or the local Time Zone and,
+     * just compare to dates considering the actual numbers (but of course, ignoring the real Time Zone)
+     *
      * @param \DateTime|null $dateTime1
      * @param \DateTime|null $dateTime2
      * @param string|null $format
@@ -45,7 +48,7 @@ trait EntityTrait
 
         $interval = $dateTime1->diff($dateTime2);
 
-        return $format ? $interval->format($format) : $interval;
+        return $format ? ($interval ? $interval->format($format) : false) : $interval;
     }
 
     /**
