@@ -21,6 +21,26 @@ trait EntityTrait
     }
 
     /**
+     * @param \DateTime|null $dateTime1
+     * @param \DateTime|null $dateTime2
+     * @param bool $strict
+     * @return bool|\DateInterval
+     */
+    public static function validDateDiffInterval(\DateTime $dateTime1 = null, \DateTime $dateTime2 = null, bool $strict = true)
+    {
+        if(!$dateTime1 || !$dateTime2) {
+            return false;
+        }
+
+        if($strict === true) {
+            $dateTime1 = new \DateTime($dateTime1->format('Ymd H:s:i'));
+            $dateTime2 = new \DateTime($dateTime2->format('Ymd H:s:i'));
+        }
+
+        return $dateTime1->diff($dateTime2);
+    }
+
+    /**
      * $options = [
      *  getter          required    string
      *  hasPivotTable   optional    boolean
