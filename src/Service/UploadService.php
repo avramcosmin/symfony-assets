@@ -2,7 +2,7 @@
 
 namespace Mindlahus\SymfonyAssets\Service;
 
-use Mindlahus\SymfonyAssets\Traits\UploadTrait;
+use Mindlahus\SymfonyAssets\Traits\FileTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UploadService
@@ -17,7 +17,7 @@ class UploadService
         $this->container = $container;
     }
 
-    use UploadTrait;
+    use FileTrait;
 
     /**
      * @return ContainerInterface

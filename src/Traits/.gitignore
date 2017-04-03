@@ -7,8 +7,8 @@
 !CryptoTrait.php
 !DatabaseExportTrait.php
 !DownloadTrait.php
+!FileTrait.php
 !GlobalTrait.php
 !StringTrait.php
 !TestTrait.php
-!UploadTrait.php
 !VariablesMapTrait.php
