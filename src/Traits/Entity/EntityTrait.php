@@ -23,21 +23,29 @@ trait EntityTrait
     /**
      * @param \DateTime|null $dateTime1
      * @param \DateTime|null $dateTime2
+     * @param string|null $format
      * @param bool $strict
-     * @return bool|\DateInterval
+     * @return bool|\DateInterval|string
      */
-    public static function validDateDiffInterval(\DateTime $dateTime1 = null, \DateTime $dateTime2 = null, bool $strict = true)
+    public static function validDateDiffInterval(
+        \DateTime $dateTime1 = null,
+        \DateTime $dateTime2 = null,
+        string $format = null,
+        bool $strict = true
+    )
     {
-        if(!$dateTime1 || !$dateTime2) {
+        if (!$dateTime1 || !$dateTime2) {
             return false;
         }
 
-        if($strict === true) {
+        if ($strict === true) {
             $dateTime1 = new \DateTime($dateTime1->format('Ymd H:s:i'));
             $dateTime2 = new \DateTime($dateTime2->format('Ymd H:s:i'));
         }
 
-        return $dateTime1->diff($dateTime2);
+        $interval = $dateTime1->diff($dateTime2);
+
+        return $format ? $interval->format($format) : $interval;
     }
 
     /**
