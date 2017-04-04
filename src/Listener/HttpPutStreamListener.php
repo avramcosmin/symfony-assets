@@ -5,6 +5,7 @@ namespace Mindlahus\SymfonyAssets\Listener;
 /**
  * http://www.chlab.ch/blog/archives/webdevelopment/manually-parse-raw-http-data-php
  * https://gist.github.com/jas-/5c3fdc26fedd11cb9fb5
+ * https://gist.github.com/avramcosmin/c516758177e3eb88514677f93ca49457
  * https://www.google.co.uk/search?num=100&safe=active&q=parse_raw_http_request&oq=parse_raw_http_request
  */
 class HttpPutStreamListener
