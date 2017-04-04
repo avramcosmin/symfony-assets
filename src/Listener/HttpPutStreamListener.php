@@ -2,6 +2,8 @@
 
 namespace Mindlahus\SymfonyAssets\Listener;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * http://www.chlab.ch/blog/archives/webdevelopment/manually-parse-raw-http-data-php
  * https://gist.github.com/jas-/5c3fdc26fedd11cb9fb5
