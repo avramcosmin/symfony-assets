@@ -13,9 +13,10 @@ trait ControllerTrait
      * @param $data
      * @param ViewHandler $viewHandler
      * @param array $groups
+     * @param array $options
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public static function Serialize($data, ViewHandler $viewHandler, array $groups = [])
+    public static function Serialize($data, ViewHandler $viewHandler, array $groups = [], array $options = [])
     {
         $view = new View();
         $view->setData(['data' => $data]);
@@ -23,7 +24,15 @@ trait ControllerTrait
             $view->getContext()->setGroups($groups);
         }
 
-        return $viewHandler->handle($view);
+        $request = null;
+        /**
+         * Because of the anatomy of PUT requests, we use the new instance of the Request set inside ResourceAbstract
+         */
+        if ($options['entityResource'] ?? null) {
+            $request = $options['entityResource']->getRequest();
+        }
+
+        return $viewHandler->handle($view, $request);
     }
 
     /**
@@ -206,7 +215,8 @@ trait ControllerTrait
         return self::Serialize(
             self::persistenceHandler($options),
             $options['viewHandler'],
-            $options['groups']
+            $options['groups'],
+            $options
         );
     }
 }
