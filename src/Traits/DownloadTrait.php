@@ -13,12 +13,14 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 trait DownloadTrait
 {
     /**
+     * This will send the file while the browser decides if to open or output for download.
+     *
      * @param string $path
      * @param string|null $name
      * @param bool $deleteOnCompleted
      * @return BinaryFileResponse
      */
-    public static function execute(
+    public static function streamFileContentOrDownload(
         string $path,
         string $name = null,
         bool $deleteOnCompleted = true)
@@ -35,8 +37,6 @@ trait DownloadTrait
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $name
         );
-        //$response->headers->set('Content-Disposition', '"attachment; filename=' . $name . ';"');
-        //$response->send();
 
         if ($deleteOnCompleted === true) {
             $response->deleteFileAfterSend(true);
@@ -46,11 +46,13 @@ trait DownloadTrait
     }
 
     /**
+     * This will send the file and mandates the browser to output for download.
+     *
      * @param Response $response
      * @param string $fileName
      * @return Response
      */
-    public static function streamResponse(Response $response, string $fileName)
+    public static function forceDownload(Response $response, string $fileName)
     {
         $response->setStatusCode(200);
         $response->headers->set(
@@ -141,11 +143,11 @@ trait DownloadTrait
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Exception
      */
-    public static function jwtForceDownload(array $decryptedToken)
+    public static function jwtStreamDownload(array $decryptedToken)
     {
         static::jwtIsValidSession($decryptedToken);
 
-        return static::execute(
+        return static::streamFileContentOrDownload(
             $decryptedToken['file_path'],
             $decryptedToken['file_name'] ?? null,
             true
@@ -157,11 +159,11 @@ trait DownloadTrait
      * @param array $decryptedToken
      * @return Response
      */
-    public static function jwtStreamDownload(Response $response, array $decryptedToken)
+    public static function jwtForceDownload(Response $response, array $decryptedToken)
     {
         static::jwtIsValidSession($decryptedToken);
 
-        return static::streamResponse($response, $decryptedToken['file_name']);
+        return static::forceDownload($response, $decryptedToken['file_name']);
     }
 
     /**

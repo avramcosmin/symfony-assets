@@ -99,6 +99,8 @@ trait DatabaseExportTrait
     }
 
     /**
+     * todo : move this into a different Trait (maybe named CsvTrait)
+     *
      * @param Query $entities
      * @param array $header
      * @param array $cols
@@ -127,7 +129,7 @@ trait DatabaseExportTrait
      */
     public static function inMemoryEntitiesToCSV(Query $entities, array $header, array $cols, string $fileName)
     {
-        return DownloadHelper::streamResponse(
+        return DownloadHelper::forceDownload(
             new StreamedResponse(function () use ($entities, $header, $cols) {
                 return static::entitiesToCSV($entities, $header, $cols);
             }),
