@@ -195,7 +195,8 @@ class HttpPutStreamListener
     {
         $results = array(
             'request' => [],
-            'files' => []
+            'files' => [],
+            'isEmptyPutStream' => true
         );
 
         if (count($array['request']) > 0) {
@@ -210,6 +211,7 @@ class HttpPutStreamListener
                     }
                 }
             }
+            $results['isEmptyPutStream'] = false;
         }
 
         if (count($array['files']) > 0) {
@@ -231,6 +233,7 @@ class HttpPutStreamListener
                     }
                 }
             }
+            $results['isEmptyPutStream'] = false;
         }
 
         return $results;
