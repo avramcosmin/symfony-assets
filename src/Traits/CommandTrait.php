@@ -250,4 +250,17 @@ trait CommandTrait
             $this->_writeError($output, "\n\r" . $e->getMessage());
         }
     }
+
+    /**
+     * @param array $commands
+     */
+    private function _exec_bin_console_command(array $commands)
+    {
+        $bin_console_file_path = $this->getContainer()->get('kernel')->getRootDir()
+            . '/../bin/console';
+        $stdout = file_exists('/dev/null') ? '/dev/null 2>&1' : 'NUL';
+        foreach ($commands as $command) {
+            exec("php ${bin_console_file_path} ${command} >${stdout}");
+        }
+    }
 }
