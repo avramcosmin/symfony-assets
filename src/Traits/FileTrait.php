@@ -43,6 +43,15 @@ trait FileTrait
             throw new \Exception('Not an instance of file');
         }
 
+        return static::getExtension($fileName);
+    }
+
+    /**
+     * @param string $fileName
+     * @return string
+     */
+    public static function getExtension(string $fileName)
+    {
         return strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
     }
 }

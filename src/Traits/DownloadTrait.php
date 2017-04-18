@@ -9,9 +9,13 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait DownloadTrait
 {
+
+    use FileTrait;
+
     /**
      * This will send the file while the browser decides if to open or output for download.
      *
@@ -84,6 +88,37 @@ trait DownloadTrait
         $path = rtrim($path, '/') . '/' . bin2hex(random_bytes(20));
         file_put_contents($path, $octetStream);
         return $path;
+    }
+
+    /**
+     * http://stackoverflow.com/questions/17409115/return-image-from-controller-symfony2
+     *
+     * @param string $octetStream
+     * @param string $fileName
+     * @return StreamedResponse
+     */
+    public static function octetStreamToStreamedResponse(string $octetStream, string $fileName)
+    {
+        $response = new StreamedResponse(function () use ($octetStream) {
+            $handle = fopen('php://output', 'r+');
+
+            fputs($handle, $octetStream);
+
+            fclose($handle);
+        });
+
+        $response->setStatusCode(200);
+        $response->headers->set(
+            'Content-Type',
+            VariablesMapTrait::getMimeType(
+                static::getExtension($fileName)
+            ));
+        $response->headers->set('Content-Disposition', '"inline; filename=' . $fileName . ';"');
+        // used for debug
+        // $response->sendContent();
+        $response->send();
+
+        return $response;
     }
 
     /**

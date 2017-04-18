@@ -1049,15 +1049,23 @@ trait VariablesMapTrait
     }
 
     /**
-     * @param string $mimeType
-     * @param bool|null $flip
+     * @param string $extension
      * @return string|null
      */
-    public static function getMimeType(string $mimeType, bool $flip = null)
+    public static function getMimeType(string $extension)
     {
-        $mimeType = strtolower($mimeType);
+        $extension = strtolower($extension);
 
-        return static::getMimeTypesMap($flip)[$mimeType] ?? null;
+        return static::getMimeTypesMap()[$extension] ?? null;
+    }
+
+    /**
+     * @param string $mimeType
+     * @return null
+     */
+    public static function getExtensionByMimeType(string $mimeType)
+    {
+        return static::getMimeTypesMap(true)[$mimeType] ?? null;
     }
 
     /**
