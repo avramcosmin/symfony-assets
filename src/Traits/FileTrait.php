@@ -54,4 +54,13 @@ trait FileTrait
     {
         return strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
     }
+
+    /**
+     * @param string $fileName
+     * @return string
+     */
+    public static function getFileBaseName(string $fileName)
+    {
+        return pathinfo($fileName, PATHINFO_BASENAME);
+    }
 }

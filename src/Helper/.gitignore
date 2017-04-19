@@ -6,6 +6,7 @@
 !DownloadHelper.php
 !EntityHelper.php
 !EntityRepositoryHelper.php
+!FileHelper.php
 !GlobalHelper.php
 !StringHelper.php
 !ThrowableHelper.php
