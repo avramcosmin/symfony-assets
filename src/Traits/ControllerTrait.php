@@ -219,4 +219,52 @@ trait ControllerTrait
             $options
         );
     }
+
+    /**
+     * $options = [
+     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
+     *  entity          required    Instance of an Entity class
+     * ]
+     *
+     * @param array $options
+     * @return mixed
+     */
+    public static function removingHandler(array $options)
+    {
+        if (!$options['entity']) {
+            throw new HttpException(404, "Entity not found");
+        }
+
+        try {
+
+            $options['entityManager']->remove($options['entity']);
+            $options['entityManager']->flush();
+
+        } catch (\Exception $e) {
+            throw new HttpException($e->getCode(), $e->getMessage());
+        }
+
+        return 'Entity successful deleted.';
+    }
+
+    /**
+     * $options = [
+     *  entity          required    Instance of an Entity class
+     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
+     *  viewHandler     required    \FOS\RestBundle\View\ViewHandler
+     *  groups          optional    array
+     * ]
+     *
+     * @param array $options
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public static function SerializedRemovingHandler(array $options)
+    {
+        return self::Serialize(
+            self::removingHandler($options),
+            $options['viewHandler'],
+            $options['groups'],
+            $options
+        );
+    }
 }
