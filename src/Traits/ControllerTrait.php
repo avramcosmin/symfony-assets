@@ -10,6 +10,11 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 trait ControllerTrait
 {
     /**
+     * $options = [
+     *  entityResource      optional    EntityResource
+     *  statusCode          optional    Response status code
+     * ]
+     *
      * @param $data
      * @param ViewHandler $viewHandler
      * @param array $groups
@@ -22,6 +27,10 @@ trait ControllerTrait
         $view->setData(['data' => $data]);
         if (!empty($groups)) {
             $view->getContext()->setGroups($groups);
+        }
+
+        if ($options['statusCode'] ?? null) {
+            $view->setStatusCode($options['statusCode']);
         }
 
         $request = null;
@@ -235,16 +244,13 @@ trait ControllerTrait
             throw new HttpException(404, "Entity not found");
         }
 
-        try {
+        $options['entityManager']->remove($options['entity']);
+        $options['entityManager']->flush();
 
-            $options['entityManager']->remove($options['entity']);
-            $options['entityManager']->flush();
-
-        } catch (\Exception $e) {
-            throw new HttpException($e->getCode(), $e->getMessage());
-        }
-
-        return 'Entity successful deleted.';
+        return [
+            'code' => 204,
+            'message' => 'Entity successful deleted.'
+        ];
     }
 
     /**
@@ -260,8 +266,11 @@ trait ControllerTrait
      */
     public static function SerializedRemovalHandler(array $options)
     {
+        $response = self::removalHandler($options);
+        $options['statusCode'] = $response['code'];
+
         return self::Serialize(
-            self::removalHandler($options),
+            $response,
             $options['viewHandler'],
             $options['groups'],
             $options
