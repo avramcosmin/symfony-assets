@@ -1,4 +1,4 @@
-# Symfony Assets v.1.0.7
+# Symfony Assets
 
 A list of PHP classes that will help you develop fast & easy various API's.
 
@@ -7,7 +7,7 @@ A list of PHP classes that will help you develop fast & easy various API's.
 `Simfony Assets` provides multiple services. Here is the list of all available services:
 
 - Download Service.
-- Export Service.
+- Database Export Service.
 - Exception Listener.
 
 Just add the following lines inside `app/config/services.yml`:
@@ -16,8 +16,11 @@ Just add the following lines inside `app/config/services.yml`:
     mindlahus.v1.download_service:
         class: Mindlahus\SymfonyAssets\Service\DownloadService
         arguments: ["@service_container"]
-    mindlahus.v1.export_service:
-        class: Mindlahus\SymfonyAssets\Service\ExportService
+    mindlahus.v1.upload_service:
+        class: Mindlahus\SymfonyAssets\Service\UploadService
+        arguments: ["@service_container"]
+    mindlahus.v1.database_export_service:
+        class: Mindlahus\SymfonyAssets\Service\DatabaseExportService
         arguments: ["@service_container"]
     mindlahus.v1.exception_listener:
             class: Mindlahus\SymfonyAssets\EventListener\ExceptionListener
@@ -27,7 +30,7 @@ Just add the following lines inside `app/config/services.yml`:
 
 ## Integrating `gedmo/doctrine-extensions`
 
-The easiest way of connecting this to you app is by simple copy/paste. See `src/Resources/config/doctrine_extensions.yml`.
+The easiest way of connecting this to your app is by simple copy/paste. See `src/Resources/config/doctrine_extensions.yml`.
 
 ```yaml
     gedmo.listener.timestampable:
@@ -61,9 +64,3 @@ To connect the listener to your app, just `copy/paste` the following snippet.
             # loggable hooks user username if one is in security context
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 ```
-
-**REMEMBER!** To set the default value of the private variable `$userRepository` inside `DoctrineExtensionListener`.  
-This should be a valid `User` entity.
-
-If both cases apply to you, just link to `src/Resources/config/doctrine_extensions.yml` from inside your `config.yml`.  
-Please avoid doing this. It does not give you both control or flexibility.

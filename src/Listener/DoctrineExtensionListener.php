@@ -15,20 +15,35 @@ class DoctrineExtensionListener implements ContainerAwareInterface
     protected $container;
     private $userRepository;
 
+    /**
+     * @param ContainerInterface|null $container
+     */
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
+    /**
+     * @param string $userRepository
+     */
     public function setUserRepository(string $userRepository)
     {
         $this->userRepository = $userRepository;
     }
 
+    /**
+     * @param GetResponseEvent $event
+     */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        $tokenStorage = $this->container->get('security.token_storage', ContainerInterface::NULL_ON_INVALID_REFERENCE);
-        $authorizationChecker = $this->container->get('security.authorization_checker', ContainerInterface::NULL_ON_INVALID_REFERENCE);
+        $tokenStorage = $this->container->get(
+            'security.token_storage',
+            ContainerInterface::NULL_ON_INVALID_REFERENCE
+        );
+        $authorizationChecker = $this->container->get(
+            'security.authorization_checker',
+            ContainerInterface::NULL_ON_INVALID_REFERENCE
+        );
         if (null !== $tokenStorage
             &&
             null !== $authorizationChecker

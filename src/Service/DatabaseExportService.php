@@ -2,22 +2,22 @@
 
 namespace Mindlahus\SymfonyAssets\Service;
 
-use Mindlahus\SymfonyAssets\Traits\DownloadTrait;
+use Mindlahus\SymfonyAssets\Traits\DatabaseExportTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class DownloadService
+class DatabaseExportService
 {
     /**
      * @var ContainerInterface
      */
-    private $container;
+    public $container;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
-    use DownloadTrait;
+    use DatabaseExportTrait;
 
     /**
      * @return ContainerInterface

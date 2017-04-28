@@ -2,4 +2,6 @@
 !Timestampable
 !.gitignore
 !ControlFieldTrait.php
+!EntityRepositoryTrait.php
+!EntityTrait.php
 !NameTrait.php

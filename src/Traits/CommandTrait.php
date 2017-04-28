@@ -164,7 +164,12 @@ trait CommandTrait
      * @param string $callback
      * @param array $options
      */
-    private function _executeReconciliation(OutputInterface $output, string $repository, string $callback, array $options = [])
+    private function _executeReconciliation(
+        OutputInterface $output,
+        string $repository,
+        string $callback,
+        array $options = []
+    )
     {
         gc_enable();
         $this->_init();
@@ -192,10 +197,28 @@ trait CommandTrait
                     if (($options['usingIterate'] ?? true) === true) {
                         $entity = $entity[0];
                     }
+                    /**
+                     * todo : replace with the suggested approach
+                     *
+                     * if (
+                     * method_exists($this, 'entityExistsCallback')
+                     * &&
+                     * $this->{'entityExistsCallback'}($output, $entity)
+                     * ) {
+                     * continue;
+                     * }
+                     */
                     if (($options['existsCallback'] ?? null) && $this->{$options['existsCallback']}($output, $entity)) {
                         continue;
                     }
                     $this->{$callback}($entity);
+                    /**
+                     * todo : replace with the suggested approach
+                     * if (method_exists($this, 'entityExistsCallback')) {
+                     * $this->{'entityPersistCallback'}($entity);
+                     * $this->em->persist($entity);
+                     * }
+                     */
                     if ($options['persistCallback'] ?? null) {
                         $entity = $this->{$options['persistCallback']}($entity);
                         $this->em->persist($entity);
@@ -225,6 +248,19 @@ trait CommandTrait
             }
         } catch (\Throwable $e) {
             $this->_writeError($output, "\n\r" . $e->getMessage());
+        }
+    }
+
+    /**
+     * @param array $commands
+     */
+    private function _exec_bin_console_command(array $commands)
+    {
+        $bin_console_file_path = $this->getContainer()->get('kernel')->getRootDir()
+            . '/../bin/console';
+        $stdout = file_exists('/dev/null') ? '/dev/null 2>&1' : 'NUL';
+        foreach ($commands as $command) {
+            exec("php ${bin_console_file_path} ${command} >${stdout}");
         }
     }
 }

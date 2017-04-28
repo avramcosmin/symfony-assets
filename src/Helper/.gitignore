@@ -1,10 +1,12 @@
 /*
 !.gitignore
 !ControllerHelper.php
+!CryptoHelper.php
+!DatabaseExportHelper.php
 !DownloadHelper.php
 !EntityHelper.php
 !EntityRepositoryHelper.php
-!ExportHelper.php
+!FileHelper.php
 !GlobalHelper.php
 !StringHelper.php
 !ThrowableHelper.php

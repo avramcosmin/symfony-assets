@@ -20,7 +20,11 @@ class ReconcileControlFieldCommand extends ContainerAwareCommand
         $this
             ->setName('mindlahus:v2:reconcile:control-field')
             ->setDescription('Reconciles the control fields from the database.')
-            ->addArgument('repository', InputArgument::OPTIONAL, 'The entity of witch control field you want to reconcile.');
+            ->addArgument(
+                'repository',
+                InputArgument::OPTIONAL,
+                'The entity of witch control field you want to reconcile.'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

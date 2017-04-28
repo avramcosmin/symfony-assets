@@ -2,10 +2,10 @@
 
 namespace Mindlahus\SymfonyAssets\Service;
 
-use Mindlahus\SymfonyAssets\Traits\DownloadTrait;
+use Mindlahus\SymfonyAssets\Traits\FileTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class DownloadService
+class UploadService
 {
     /**
      * @var ContainerInterface
@@ -17,7 +17,7 @@ class DownloadService
         $this->container = $container;
     }
 
-    use DownloadTrait;
+    use FileTrait;
 
     /**
      * @return ContainerInterface
