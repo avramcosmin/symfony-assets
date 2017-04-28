@@ -229,7 +229,7 @@ trait ControllerTrait
      * @param array $options
      * @return mixed
      */
-    public static function removingHandler(array $options)
+    public static function removalHandler(array $options)
     {
         if (!$options['entity']) {
             throw new HttpException(404, "Entity not found");
@@ -258,7 +258,7 @@ trait ControllerTrait
      * @param array $options
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public static function SerializedRemovingHandler(array $options)
+    public static function SerializedRemovalHandler(array $options)
     {
         return self::Serialize(
             self::removingHandler($options),
