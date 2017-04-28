@@ -261,7 +261,7 @@ trait ControllerTrait
     public static function SerializedRemovalHandler(array $options)
     {
         return self::Serialize(
-            self::removingHandler($options),
+            self::removalHandler($options),
             $options['viewHandler'],
             $options['groups'],
             $options
