@@ -10,6 +10,11 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 trait ControllerTrait
 {
     /**
+     * $options = [
+     *  entityResource      optional    EntityResource
+     *  statusCode          optional    Response status code
+     * ]
+     *
      * @param $data
      * @param ViewHandler $viewHandler
      * @param array $groups
@@ -22,6 +27,10 @@ trait ControllerTrait
         $view->setData(['data' => $data]);
         if (!empty($groups)) {
             $view->getContext()->setGroups($groups);
+        }
+
+        if ($options['statusCode'] ?? null) {
+            $view->setStatusCode($options['statusCode']);
         }
 
         $request = null;
@@ -214,6 +223,54 @@ trait ControllerTrait
     {
         return self::Serialize(
             self::persistenceHandler($options),
+            $options['viewHandler'],
+            $options['groups'],
+            $options
+        );
+    }
+
+    /**
+     * $options = [
+     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
+     *  entity          required    Instance of an Entity class
+     * ]
+     *
+     * @param array $options
+     * @return mixed
+     */
+    public static function removalHandler(array $options)
+    {
+        if (!$options['entity']) {
+            throw new HttpException(404, "Entity not found");
+        }
+
+        $options['entityManager']->remove($options['entity']);
+        $options['entityManager']->flush();
+
+        return [
+            'code' => 204,
+            'message' => 'Entity successful deleted.'
+        ];
+    }
+
+    /**
+     * $options = [
+     *  entity          required    Instance of an Entity class
+     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
+     *  viewHandler     required    \FOS\RestBundle\View\ViewHandler
+     *  groups          optional    array
+     * ]
+     *
+     * @param array $options
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public static function SerializedRemovalHandler(array $options)
+    {
+        $response = self::removalHandler($options);
+        $options['statusCode'] = $response['code'];
+
+        return self::Serialize(
+            $response,
             $options['viewHandler'],
             $options['groups'],
             $options
