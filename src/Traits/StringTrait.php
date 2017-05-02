@@ -102,9 +102,9 @@ trait StringTrait
      * @param string $delimiter
      * @return string
      */
-    public static function splitCamelCase(string $str, string $delimiter = ' ')
+    public static function camelCaseToUCWords(string $str, string $delimiter = ' ')
     {
-        return ucfirst(preg_replace('/(?<=\\w)(?=[A-Z])/', $delimiter, $str));
+        return ucfirst(preg_replace('/(?<=[a-z])(?=[A-Z0-9])/', $delimiter, $str));
     }
 
     /**
