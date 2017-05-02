@@ -96,6 +96,17 @@ trait StringTrait
         return preg_replace('/\s+/', '', $str);
     }
 
+
+    /**
+     * @param string $str
+     * @param string $delimiter
+     * @return string
+     */
+    public static function splitCamelCase(string $str, string $delimiter = ' ')
+    {
+        return ucfirst(preg_replace('/(?<=\\w)(?=[A-Z])/', $delimiter, $str));
+    }
+
     /**
      * @param $str
      * @param bool $jsonEncode
