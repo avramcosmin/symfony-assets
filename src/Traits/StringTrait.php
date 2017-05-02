@@ -96,6 +96,17 @@ trait StringTrait
         return preg_replace('/\s+/', '', $str);
     }
 
+
+    /**
+     * @param string $str
+     * @param string $delimiter
+     * @return string
+     */
+    public static function camelCaseToUCWords(string $str, string $delimiter = ' ')
+    {
+        return ucfirst(preg_replace('/(?<=[a-z])(?=[A-Z0-9])/', $delimiter, $str));
+    }
+
     /**
      * @param $str
      * @param bool $jsonEncode
