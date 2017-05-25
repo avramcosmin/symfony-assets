@@ -5,6 +5,7 @@ namespace Mindlahus\SymfonyAssets\Traits;
 use Doctrine\ORM\Query;
 use Mindlahus\SymfonyAssets\Helper\DownloadHelper;
 use Mindlahus\SymfonyAssets\Helper\StringHelper;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -28,7 +29,7 @@ trait DatabaseExportTrait
      * @return string
      * @throws \Exception
      */
-    public static function execute(array $options = [])
+    public static function execute(array $options = []): string
     {
         $resolver = new OptionsResolver();
         $resolver->setDefined([
@@ -107,7 +108,12 @@ trait DatabaseExportTrait
      * @param string|null $filePath Full path including the file name
      * @return string
      */
-    public static function entitiesToCSV(Query $entities, array $header, array $cols, string $filePath = null)
+    public static function entitiesToCSV(
+        Query $entities,
+        array $header,
+        array $cols,
+        string $filePath = null
+    ): string
     {
         $accessor = PropertyAccess::createPropertyAccessor();
         $handler = $filePath ? fopen($filePath, 'w+') : fopen('php://output', 'r+');
@@ -125,9 +131,14 @@ trait DatabaseExportTrait
      * @param array $header
      * @param array $cols
      * @param string $fileName
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public static function inMemoryEntitiesToCSV(Query $entities, array $header, array $cols, string $fileName)
+    public static function inMemoryEntitiesToCSV(
+        Query $entities,
+        array $header,
+        array $cols,
+        string $fileName
+    ): Response
     {
         return DownloadHelper::forceDownload(
             new StreamedResponse(function () use ($entities, $header, $cols) {
@@ -143,7 +154,7 @@ trait DatabaseExportTrait
      * @param PropertyAccessor $accessor
      * @return array
      */
-    public static function _mapCSV($entity, array $cols, PropertyAccessor $accessor)
+    public static function _mapCSV($entity, array $cols, PropertyAccessor $accessor): array
     {
         $response = [];
         foreach ($cols as $col) {
@@ -152,7 +163,7 @@ trait DatabaseExportTrait
                 $response[] = (filter_var($val, FILTER_VALIDATE_BOOLEAN) === false ? 'NO' : 'YES');
             } else if ($val instanceof \DateTime) {
                 $response[] = StringHelper::dateFormat($val);
-            } else if (is_null($val)) {
+            } else if ($val === null) {
                 $response[] = '';
             } else {
                 $response[] = $val;

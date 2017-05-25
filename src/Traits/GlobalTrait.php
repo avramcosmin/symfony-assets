@@ -9,7 +9,7 @@ trait GlobalTrait
      * @param $expectedInstance
      * @return bool
      */
-    public static function isInstanceOf($givenInstance, $expectedInstance)
+    public static function isInstanceOf($givenInstance, $expectedInstance): bool
     {
         return $givenInstance instanceof $expectedInstance;
     }

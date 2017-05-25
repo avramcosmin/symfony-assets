@@ -22,7 +22,7 @@ class DownloadService
     /**
      * @return ContainerInterface
      */
-    public function getContainer()
+    public function getContainer(): ContainerInterface
     {
         return $this->container;
     }

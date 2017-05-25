@@ -13,16 +13,16 @@ trait FileTrait
      * @return string
      * @throws \Exception
      */
-    public static function sanitizeBaseName(string $baseName, string $glue = '_')
+    public static function sanitizeBaseName(string $baseName, string $glue = '_'): string
     {
         $extension = strtolower(pathinfo($baseName, PATHINFO_EXTENSION));
         if (empty($extension)) {
-            throw new \Exception("Expecting extension. None given.");
+            throw new \Exception('Expecting extension. None given.');
         }
 
         $fileName = pathinfo($baseName, PATHINFO_FILENAME);
         if (empty($fileName)) {
-            throw new \Exception("Expecting file name. None given.");
+            throw new \Exception('Expecting file name. None given.');
         }
 
         return StringTrait::sanitizeString($fileName, $glue) . '.' . $extension;
@@ -33,14 +33,14 @@ trait FileTrait
      * @return string
      * @throws \Exception
      */
-    public static function getFileExtension(File $file)
+    public static function getFileExtension(File $file): string
     {
         if ($file instanceof UploadedFile) {
             $fileName = $file->getClientOriginalName();
         } elseif ($file instanceof File) {
             $fileName = $file->getFilename();
         } else {
-            throw new \Exception('Not an instance of file');
+            throw new \Exception('Not an instance of file.');
         }
 
         return static::getExtension($fileName);
@@ -50,7 +50,7 @@ trait FileTrait
      * @param string $fileName
      * @return string
      */
-    public static function getExtension(string $fileName)
+    public static function getExtension(string $fileName): string
     {
         return strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
     }
@@ -59,7 +59,7 @@ trait FileTrait
      * @param string $fileName
      * @return string
      */
-    public static function getFileBaseName(string $fileName)
+    public static function getFileBaseName(string $fileName): string
     {
         return pathinfo($fileName, PATHINFO_BASENAME);
     }

@@ -18,28 +18,24 @@ class HttpPutStreamListener
     protected $input;
 
     /**
-     * HttpPutStreamHelper constructor.
      * @param Request $request
-     * @param array $data
+     * @return array
      */
-    public function __construct(Request $request, array &$data)
+    public function getData(Request $request): array
     {
         $this->input = $request->getContent();
 
         $boundary = $this->boundary();
 
         if (!count($boundary)) {
-            return array(
+            return [
                 'request' => $this->parse(),
                 'files' => []
-            );
+            ];
         }
 
         $blocks = $this->split($boundary);
-
-        $data = $this->blocks($blocks);
-
-        return $data;
+        return $this->blocks($blocks);
     }
 
     /**
@@ -64,7 +60,7 @@ class HttpPutStreamListener
      * @param $boundary
      * @return array
      */
-    private function split($boundary)
+    private function split($boundary): array
     {
         $result = preg_split("/-+$boundary/", $this->input);
         array_pop($result);
@@ -75,24 +71,26 @@ class HttpPutStreamListener
      * @param array $array
      * @return array
      */
-    private function blocks(array $array)
+    private function blocks(array $array): array
     {
         $results = array(
-            'request' => array(),
-            'files' => array()
+            'request' => [],
+            'files' => []
         );
 
         foreach ($array as $key => $value) {
-            if (empty($value))
+            if (empty($value)) {
                 continue;
+            }
 
             $block = $this->decide($value);
 
-            if (count($block['request']) > 0)
-                array_push($results['request'], $block['request']);
-
-            if (count($block['files']) > 0)
-                array_push($results['files'], $block['files']);
+            if (count($block['request']) > 0) {
+                $results['request'][] = $block['request'];
+            }
+            if (count($block['files']) > 0) {
+                $results['files'][] = $block['files'];
+            }
         }
 
         return $this->merge($results);
@@ -102,33 +100,33 @@ class HttpPutStreamListener
      * @param $string
      * @return array
      */
-    private function decide($string)
+    private function decide($string): array
     {
         if (strpos($string, 'application/octet-stream') !== FALSE) {
             return array(
                 'request' => $this->file($string),
-                'files' => array()
+                'files' => []
             );
         }
 
         if (strpos($string, 'filename') !== FALSE) {
             return array(
-                'request' => array(),
+                'request' => [],
                 'files' => $this->file_stream($string)
             );
         }
 
-        return array(
+        return [
             'request' => $this->post($string),
-            'files' => array()
-        );
+            'files' => []
+        ];
     }
 
     /**
      * @param $string
      * @return array
      */
-    private function file($string)
+    private function file($string): array
     {
         preg_match('/name=\"([^\"]*)\".*stream[\n|\r]+([^\n\r].*)?$/s', $string, $match);
         return [
@@ -140,9 +138,9 @@ class HttpPutStreamListener
      * @param $string
      * @return array
      */
-    private function file_stream($string)
+    private function file_stream($string): array
     {
-        $data = array();
+        $data = [];
 
         preg_match('/name=\"([^\"]*)\"; filename=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $string, $match);
         preg_match('/Content-Type: (.*)?/', $match[3], $mime);
@@ -174,7 +172,7 @@ class HttpPutStreamListener
      */
     private function post($string)
     {
-        $data = array();
+        $data = [];
 
         preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $string, $match);
 
@@ -191,7 +189,7 @@ class HttpPutStreamListener
      * @param $array
      * @return array
      */
-    private function merge($array)
+    private function merge($array): array
     {
         $results = array(
             'request' => [],

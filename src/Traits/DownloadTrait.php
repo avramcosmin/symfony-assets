@@ -27,7 +27,8 @@ trait DownloadTrait
     public static function streamFileContentOrDownload(
         string $path,
         string $name = null,
-        bool $deleteOnCompleted = true)
+        bool $deleteOnCompleted = true
+    ): BinaryFileResponse
     {
         $name = $name ?: pathinfo($path, PATHINFO_BASENAME);
         $response = new BinaryFileResponse($path);
@@ -56,7 +57,7 @@ trait DownloadTrait
      * @param string $fileName
      * @return Response
      */
-    public static function forceDownload(Response $response, string $fileName)
+    public static function forceDownload(Response $response, string $fileName): Response
     {
         $response->setStatusCode(200);
         $response->headers->set(
@@ -79,7 +80,7 @@ trait DownloadTrait
      * @param string $octetStream
      * @return string
      */
-    public static function octetStreamToTmp(string $path, string $octetStream)
+    public static function octetStreamToTmp(string $path, string $octetStream): string
     {
         /**
          * make sure the directory exists to avoid errors
@@ -97,12 +98,12 @@ trait DownloadTrait
      * @param string $fileName
      * @return StreamedResponse
      */
-    public static function octetStreamToStreamedResponse(string $octetStream, string $fileName)
+    public static function octetStreamToStreamedResponse(string $octetStream, string $fileName): StreamedResponse
     {
         $response = new StreamedResponse(function () use ($octetStream) {
-            $handle = fopen('php://output', 'r+');
+            $handle = fopen('php://output', 'br+');
 
-            fputs($handle, $octetStream);
+            fwrite($handle, $octetStream);
 
             fclose($handle);
         });
@@ -140,7 +141,7 @@ trait DownloadTrait
         ViewHandler $viewHandler,
         string $encryptionKey,
         array $tokenContent = []
-    )
+    ): Response
     {
         $tokenContent = array_merge($request->request->all(), $tokenContent);
 
@@ -159,7 +160,7 @@ trait DownloadTrait
         $jwt = str_replace('Bearer ', '', $request->headers->get('Authorization'));
         return ControllerHelper::Serialize(
             [
-                'token' => CryptoHelper::encrypt(
+                'token' => CryptoHelper::encryptArrayToBase64(
                     array_merge(
                         [
                             'jwt' => $jwt
@@ -175,10 +176,10 @@ trait DownloadTrait
 
     /**
      * @param array $decryptedToken
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      * @throws \Exception
      */
-    public static function jwtStreamDownload(array $decryptedToken)
+    public static function jwtStreamDownload(array $decryptedToken): BinaryFileResponse
     {
         static::jwtIsValidSession($decryptedToken);
 
@@ -194,7 +195,7 @@ trait DownloadTrait
      * @param array $decryptedToken
      * @return Response
      */
-    public static function jwtForceDownload(Response $response, array $decryptedToken)
+    public static function jwtForceDownload(Response $response, array $decryptedToken): Response
     {
         static::jwtIsValidSession($decryptedToken);
 
@@ -205,7 +206,7 @@ trait DownloadTrait
      * @param array $decryptedToken
      * @throws \Exception
      */
-    public static function jwtIsValidSession(array $decryptedToken)
+    public static function jwtIsValidSession(array $decryptedToken): void
     {
         if (time() > $decryptedToken['exp']) {
             throw new \Exception('Invalid download session!');

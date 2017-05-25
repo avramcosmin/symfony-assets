@@ -18,7 +18,7 @@ class DoctrineExtensionListener implements ContainerAwareInterface
     /**
      * @param ContainerInterface|null $container
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
@@ -26,7 +26,7 @@ class DoctrineExtensionListener implements ContainerAwareInterface
     /**
      * @param string $userRepository
      */
-    public function setUserRepository(string $userRepository)
+    public function setUserRepository(string $userRepository): void
     {
         $this->userRepository = $userRepository;
     }
@@ -34,7 +34,7 @@ class DoctrineExtensionListener implements ContainerAwareInterface
     /**
      * @param GetResponseEvent $event
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(GetResponseEvent $event): void
     {
         $tokenStorage = $this->container->get(
             'security.token_storage',

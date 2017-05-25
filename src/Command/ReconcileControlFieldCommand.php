@@ -15,7 +15,7 @@ class ReconcileControlFieldCommand extends ContainerAwareCommand
 
     protected $repositories = [];
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('mindlahus:v2:reconcile:control-field')

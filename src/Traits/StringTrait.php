@@ -14,7 +14,7 @@ trait StringTrait
      * @return string
      * @throws \Throwable
      */
-    public static function shortenThis($str, int $length = null)
+    public static function shortenThis($str, int $length = null): string
     {
         if (!$length) {
             $length = 255;
@@ -29,7 +29,12 @@ trait StringTrait
          * http://stackoverflow.com/questions/2326125/remove-multiple-whitespaces
          * http://www.php.net/manual/en/regexp.reference.character-classes.php
          */
-        $str = mb_ereg_replace('[[:space:]]+', ' ', strip_tags($str), "ms");
+        $str = mb_ereg_replace(
+            '[[:space:]]+',
+            ' ',
+            strip_tags($str),
+            'ms'
+        );
         $length = abs((int)$length - 1);
 
         /**
@@ -43,7 +48,7 @@ trait StringTrait
             $str = mb_ereg_replace(
                 '^(.{1,' . $length . '})([^\s]+)(\s.*|$)',
                 '\\1\\2…',
-                $str, "ms"
+                $str, 'ms'
             );
         }
 
@@ -74,7 +79,7 @@ trait StringTrait
      * @param string $format
      * @return string
      */
-    public static function dateFormat(\DateTime $val, string $format = \DateTime::ATOM)
+    public static function dateFormat(\DateTime $val, string $format = \DateTime::ATOM): string
     {
         return $val->format($format);
     }
@@ -85,7 +90,7 @@ trait StringTrait
      * @param string $prefix
      * @return string
      */
-    public static function toCamelCase(string $str, string $prefix = null)
+    public static function toCamelCase(string $str, string $prefix = null): string
     {
         $str = ucwords(strtolower(preg_replace('/[^A-z0-9]+/', ' ', $str)));
 
@@ -102,7 +107,7 @@ trait StringTrait
      * @param string $delimiter
      * @return string
      */
-    public static function camelCaseToUCWords(string $str, string $delimiter = ' ')
+    public static function camelCaseToUCWords(string $str, string $delimiter = ' '): string
     {
         return ucfirst(preg_replace('/(?<=[a-z])(?=[A-Z0-9])/', $delimiter, $str));
     }
@@ -112,12 +117,13 @@ trait StringTrait
      * @param bool $jsonEncode
      * @return string
      */
-    public static function base64url_encode($str, $jsonEncode = false)
+    public static function base64url_encode($str, $jsonEncode = false): string
     {
         if ($jsonEncode === true) {
             $str = json_encode($str);
         }
         $str = base64_encode($str);
+
         return strtr($str, '+/=', '-_,');
     }
 
@@ -186,7 +192,7 @@ trait StringTrait
      * @param string $separator
      * @return string
      */
-    public static function keepLatin(string $str, string $separator = '_')
+    public static function keepLatin(string $str, string $separator = '_'): string
     {
         return preg_replace('/[^a-zA-Z0-9]/', $separator, $str);
     }
@@ -204,10 +210,10 @@ trait StringTrait
             $str = iconv('UTF-8', 'ASCII//TRANSLIT', $str);
         }
 
-        $str = preg_replace("/[^a-zA-Z0-9]/", " ", $str);
-        $str = trim(preg_replace("/\\s+/", " ", $str));
+        $str = preg_replace('/[^a-zA-Z0-9]/', ' ', $str);
+        $str = trim(preg_replace("/\\s+/", ' ', $str));
         $str = strtolower($str);
 
-        return str_replace(" ", $glue, $str);
+        return str_replace(' ', $glue, $str);
     }
 }

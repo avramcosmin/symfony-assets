@@ -5,6 +5,7 @@ namespace Mindlahus\SymfonyAssets\Traits;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandler;
 use Mindlahus\SymfonyAssets\Exception\ValidationFailedException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 trait ControllerTrait
@@ -19,9 +20,14 @@ trait ControllerTrait
      * @param ViewHandler $viewHandler
      * @param array $groups
      * @param array $options
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public static function Serialize($data, ViewHandler $viewHandler, array $groups = [], array $options = [])
+    public static function Serialize(
+        $data,
+        ViewHandler $viewHandler,
+        array $groups = [],
+        array $options = []
+    ): Response
     {
         $view = new View();
         $view->setData(['data' => $data]);
@@ -67,7 +73,7 @@ trait ControllerTrait
         )->{$options['method'] ?? 'findOneBy'}($options['arguments']);
 
         if (!$data) {
-            throw new HttpException(404, "Entity not found");
+            throw new HttpException(404, 'Entity not found.');
         }
 
         return $data;
@@ -84,9 +90,9 @@ trait ControllerTrait
      * ]
      *
      * @param array $options
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public static function SerializeFindOneBy(array $options)
+    public static function SerializeFindOneBy(array $options): Response
     {
         return self::Serialize(
             self::findOneBy($options),
@@ -124,9 +130,9 @@ trait ControllerTrait
      * ]
      *
      * @param array $options
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public static function SerializeFindBy(array $options)
+    public static function SerializeFindBy(array $options): Response
     {
         return self::Serialize(
             self::findBy($options),
@@ -162,9 +168,9 @@ trait ControllerTrait
      * ]
      *
      * @param array $options
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public static function SerializeFindAll(array $options)
+    public static function SerializeFindAll(array $options): Response
     {
         return self::Serialize(
             self::findAll($options),
@@ -217,9 +223,9 @@ trait ControllerTrait
      * ]
      *
      * @param array $options
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public static function SerializedPersistenceHandler(array $options)
+    public static function SerializedPersistenceHandler(array $options): Response
     {
         return self::Serialize(
             self::persistenceHandler($options),
@@ -241,7 +247,7 @@ trait ControllerTrait
     public static function removalHandler(array $options)
     {
         if (!$options['entity']) {
-            throw new HttpException(404, "Entity not found");
+            throw new HttpException(404, 'Entity not found.');
         }
 
         $options['entityManager']->remove($options['entity']);
@@ -262,9 +268,9 @@ trait ControllerTrait
      * ]
      *
      * @param array $options
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public static function SerializedRemovalHandler(array $options)
+    public static function SerializedRemovalHandler(array $options): Response
     {
         $response = self::removalHandler($options);
         $options['statusCode'] = $response['code'];

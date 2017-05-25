@@ -25,15 +25,20 @@ trait CommandTrait
      * @var Logger $logger
      */
     private $logger;
+    /**
+     * @var OutputInterface $output
+     */
+    private $output;
 
     /**
-     *
+     * @param OutputInterface $output
      */
-    private function _init()
+    private function _init(OutputInterface $output): void
     {
         $this->container = $this->getContainer();
         $this->em = $this->container->get('doctrine.orm.entity_manager');
         $this->logger = $this->container->get('monolog.logger.onew');
+        $this->output = $output;
     }
 
     /**
@@ -41,7 +46,7 @@ trait CommandTrait
      * @param int $step
      * @return ProgressBar
      */
-    private function _advanceProgressBar(ProgressBar $progressBar, $step = 1)
+    private function _advanceProgressBar(ProgressBar $progressBar, $step = 1): ProgressBar
     {
         $progressBar->advance($step);
 
@@ -51,7 +56,7 @@ trait CommandTrait
     /**
      * @param string $msg
      */
-    private function _log(string $msg)
+    private function _log(string $msg): void
     {
         $this->logger->error($msg);
     }
@@ -61,7 +66,7 @@ trait CommandTrait
      * @param $msg
      * @return OutputInterface
      */
-    private function _writeError(OutputInterface $output, $msg)
+    private function _writeError(OutputInterface $output, $msg): OutputInterface
     {
         return $this->_write($output, $msg, 'red');
     }
@@ -71,7 +76,7 @@ trait CommandTrait
      * @param $msg
      * @return OutputInterface
      */
-    private function _writeInfo(OutputInterface $output, $msg)
+    private function _writeInfo(OutputInterface $output, $msg): OutputInterface
     {
         return $this->_write($output, $msg, 'green');
     }
@@ -82,7 +87,7 @@ trait CommandTrait
      * @param string $fg
      * @return OutputInterface
      */
-    private function _write(OutputInterface $output, $msg, $fg = 'black')
+    private function _write(OutputInterface $output, $msg, $fg = 'black'): OutputInterface
     {
         if (!is_array($msg)) {
             $msg = [$msg];
@@ -99,7 +104,7 @@ trait CommandTrait
      * @param OutputInterface $output
      * @param StopwatchEvent $event
      */
-    private function _writeDebugInfo(OutputInterface $output, StopwatchEvent $event)
+    private function _writeDebugInfo(OutputInterface $output, StopwatchEvent $event): void
     {
         $memory = number_format($event->getMemory() / 1000000, 2);
         $time = $event->getDuration() / 1000;
@@ -110,7 +115,7 @@ trait CommandTrait
      * @param $entity
      * @return bool
      */
-    private function _validate($entity)
+    private function _validate($entity): bool
     {
         $validator = $this->container->get('validator');
         $errors = $validator->validate($entity);
@@ -135,7 +140,7 @@ trait CommandTrait
      * @param string|null $repository
      * @return bool
      */
-    private function _handlePersist(OutputInterface $output, string $repository = null)
+    private function _handlePersist(OutputInterface $output, string $repository = null): bool
     {
         if (!$repository) {
             return false;
@@ -169,10 +174,10 @@ trait CommandTrait
         string $repository,
         string $callback,
         array $options = []
-    )
+    ): void
     {
         gc_enable();
-        $this->_init();
+        $this->_init($output);
 
         try {
             if (!($options['entities'] ?? null)) {
@@ -228,23 +233,17 @@ trait CommandTrait
                     }
                     if ($count % 15 === 0) {
                         $this->_advanceProgressBar($progressBar, 15);
-                        $this->em->flush();
-                        if (($options['usingIterate'] ?? true) === true) {
-                            $this->em->clear();
-                        }
-                        gc_collect_cycles();
+                        $this->_flush();
                     }
                     $count++;
                 }
-                $this->em->flush();
-                $this->em->clear();
-                gc_collect_cycles();
+                $this->_flush();
                 $progressBar->finish();
                 $event = $stopwatch->stop($repository);
                 $this->_writeInfo($output, "\n\r{$repository} successfully reconciled. Thank you!");
                 $this->_writeDebugInfo($output, $event);
             } else {
-                $this->_write($output, "Nothing to reconcile.");
+                $this->_write($output, 'Nothing to reconcile.');
             }
         } catch (\Throwable $e) {
             $this->_writeError($output, "\n\r" . $e->getMessage());
@@ -262,5 +261,12 @@ trait CommandTrait
         foreach ($commands as $command) {
             exec("php ${bin_console_file_path} ${command} >${stdout}");
         }
+    }
+
+    private function _flush(): void
+    {
+        $this->em->flush();
+        $this->em->clear();
+        gc_collect_cycles();
     }
 }

@@ -7,7 +7,7 @@ trait TestTrait
     /**
      * Tears down the Mockery framework
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         \Mockery::close();
     }

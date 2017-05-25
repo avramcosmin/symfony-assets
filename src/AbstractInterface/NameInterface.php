@@ -31,26 +31,26 @@ interface NameInterface
      *
      * @return string
      */
-    public function getFirstName();
+    public function getFirstName(): string;
 
     /**
      * Get lastName
      *
      * @return string
      */
-    public function getLastName();
+    public function getLastName(): string;
 
     /**
      * Get firstLastName
      *
      * @return string
      */
-    public function getFirstLastName();
+    public function getFirstLastName(): string;
 
     /**
      * Get lastFirstName
      *
      * @return string
      */
-    public function getLastFirstName();
+    public function getLastFirstName(): string;
 }

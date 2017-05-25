@@ -15,7 +15,7 @@ class ReconcileNameCommand extends ContainerAwareCommand
 
     protected $repositories = [];
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('mindlahus:v2:reconcile:name')
@@ -29,7 +29,7 @@ class ReconcileNameCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->_init();
+        $this->_init($output);
 
         if (!$this->_handlePersist($output, $input->getArgument('repository'))) {
             foreach ($this->repositories as $repository) {

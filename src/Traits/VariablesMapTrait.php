@@ -1021,7 +1021,7 @@ trait VariablesMapTrait
     /**
      * @return array
      */
-    public static function getAllowedExtensionsMap()
+    public static function getAllowedExtensionsMap(): array
     {
         return static::$allowedExtensionsMap;
     }
@@ -1030,7 +1030,7 @@ trait VariablesMapTrait
      * @param string $key
      * @return string|null
      */
-    public function getAllowedExtension(string $key)
+    public function getAllowedExtension(string $key): string
     {
         return static::$allowedExtensionsMap[$key] ?? null;
     }
@@ -1039,7 +1039,7 @@ trait VariablesMapTrait
      * @param bool|null $flip
      * @return array
      */
-    public static function getMimeTypesMap(bool $flip = null)
+    public static function getMimeTypesMap(bool $flip = null): array
     {
         if ($flip) {
             return array_flip(static::$mimeTypesMap);
@@ -1052,7 +1052,7 @@ trait VariablesMapTrait
      * @param string $extension
      * @return string|null
      */
-    public static function getMimeType(string $extension)
+    public static function getMimeType(string $extension): string
     {
         $extension = strtolower($extension);
 
@@ -1063,7 +1063,7 @@ trait VariablesMapTrait
      * @param string $mimeType
      * @return null
      */
-    public static function getExtensionByMimeType(string $mimeType)
+    public static function getExtensionByMimeType(string $mimeType): null
     {
         return static::getMimeTypesMap(true)[$mimeType] ?? null;
     }
@@ -1072,7 +1072,7 @@ trait VariablesMapTrait
      * @param string $extension
      * @return bool
      */
-    public static function isValidExtension(string $extension)
+    public static function isValidExtension(string $extension): bool
     {
         return isset(static::$mimeTypesMap[$extension]);
     }
@@ -1081,7 +1081,7 @@ trait VariablesMapTrait
      * @param string $mimeType
      * @return bool
      */
-    public static function isValidMimeType(string $mimeType)
+    public static function isValidMimeType(string $mimeType): bool
     {
         return isset(static::getMimeTypesMap(true)[$mimeType]);
     }
