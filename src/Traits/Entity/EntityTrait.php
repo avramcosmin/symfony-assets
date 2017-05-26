@@ -15,7 +15,7 @@ trait EntityTrait
      * @param string $format
      * @return string
      */
-    public static function getFormattedDateTime(\DateTime $val, string $format = \DateTime::ATOM)
+    public static function getFormattedDateTime(\DateTime $val, string $format = \DateTime::ATOM): string
     {
         return StringHelper::dateFormat($val, $format);
     }
@@ -133,7 +133,11 @@ trait EntityTrait
      * @param string $passwordHistory
      * @return null|string
      */
-    public static function isNotValidPassword(string $password, string $passwordConfirmation, string $passwordHistory)
+    public static function isNotValidPassword(
+        string $password,
+        string $passwordConfirmation,
+        string $passwordHistory
+    ):?string
     {
         if (array_key_exists(
             static::_encryptPassword($password),
@@ -143,11 +147,11 @@ trait EntityTrait
         }
 
         if ($password !== $passwordConfirmation) {
-            return "`Password` and `Password Confirmation` does not match!";
+            return '`Password` and `Password Confirmation` does not match!';
         }
 
         switch (false) {
-            case preg_match('/[0-9]+/', $password):
+            case preg_match('/\d+/', $password):
                 $wrongPasswordFormat = 'one digit';
                 break;
             case preg_match('/[a-z]+/', $password):
@@ -173,18 +177,18 @@ trait EntityTrait
      * @param string $password
      * @return string
      */
-    private static function _encryptPassword(string $password)
+    private static function _encryptPassword(string $password): string
     {
         return sha1($password);
     }
 
     /**
-     * @param string $passwordHistory
+     * @param string|array $passwordHistory
      * @return array|mixed|string
      */
     public static function getPasswordHistory(string $passwordHistory)
     {
-        $passwordHistory = unserialize($passwordHistory);
+        $passwordHistory = unserialize($passwordHistory, [false]);
 
         if (!is_array($passwordHistory)) {
             $passwordHistory = [];
@@ -195,10 +199,10 @@ trait EntityTrait
 
     /**
      * @param string $newPassword
-     * @param string $passwordHistory
+     * @param string|array $passwordHistory
      * @return string
      */
-    public static function setPasswordHistory(string $newPassword, string $passwordHistory)
+    public static function setPasswordHistory(string $newPassword, string $passwordHistory): string
     {
         $passwordHistory = static::getPasswordHistory($passwordHistory);
         $passwordHistory[static::_encryptPassword($newPassword)] = new \DateTime();

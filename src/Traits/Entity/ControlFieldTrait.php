@@ -6,7 +6,7 @@ trait ControlFieldTrait
 {
 
     /**
-     * @var
+     * @var string $controlField
      *
      * @ORM\Column(type="string", length=40, nullable=true)
      */
@@ -23,11 +23,11 @@ trait ControlFieldTrait
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getControlField()
+    public function getControlField(): string
     {
-        return $this->getControlField();
+        return $this->controlField;
     }
 
 }

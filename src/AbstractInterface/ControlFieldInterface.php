@@ -10,7 +10,7 @@ interface ControlFieldInterface
     public function setControlField();
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getControlField();
+    public function getControlField(): string;
 }

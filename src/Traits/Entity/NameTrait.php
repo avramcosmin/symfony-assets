@@ -107,7 +107,7 @@ trait NameTrait
      *
      * @return string
      */
-    public function getFirstName()
+    public function getFirstName(): string
     {
         return $this->firstName;
     }
@@ -117,7 +117,7 @@ trait NameTrait
      *
      * @return string
      */
-    public function getLastName()
+    public function getLastName(): string
     {
         return $this->lastName;
     }
@@ -127,7 +127,7 @@ trait NameTrait
      *
      * @return string
      */
-    public function getFirstLastName()
+    public function getFirstLastName(): string
     {
         return $this->firstLastName;
     }
@@ -137,7 +137,7 @@ trait NameTrait
      *
      * @return string
      */
-    public function getLastFirstName()
+    public function getLastFirstName(): string
     {
         return $this->lastFirstName;
     }

@@ -5,13 +5,13 @@ namespace Mindlahus\SymfonyAssets\Traits\Entity;
 trait EntityRepositoryTrait
 {
     /**
-     * @param $results
+     * @param array $results
      * @param array $y
      * @param array $x
      * @param array $o
      * @return array
      */
-    public static function getMatrix($results, array $y, array $x, array $o)
+    public static function getMatrix($results, array $y, array $x, array $o): array
     {
         self::_matrixInit($x, $y, $o);
 
@@ -41,14 +41,14 @@ trait EntityRepositoryTrait
             $r['x'] = $x['keys'];
         }
 
-        if ((isset($o['ksort']) AND $o['ksort'] === true)
-            OR (isset($o['ksort_y']) AND $o['ksort_y'] === true)
+        if ((isset($o['ksort']) && $o['ksort'] === true)
+            || (isset($o['ksort_y']) && $o['ksort_y'] === true)
         ) {
             ksort($r['y']);
         }
 
-        if ((isset($o['ksort']) AND $o['ksort'] === true)
-            OR (isset($o['ksort_x']) AND $o['ksort_x'] === true)
+        if ((isset($o['ksort']) && $o['ksort'] === true)
+            || (isset($o['ksort_x']) && $o['ksort_x'] === true)
         ) {
             ksort($r['x']);
         }
@@ -66,7 +66,7 @@ trait EntityRepositoryTrait
      * @param $o
      * @throws \Throwable
      */
-    public static function _matrixInit(&$x, &$y, $o)
+    public static function _matrixInit(&$x, &$y, $o): void
     {
         if (!isset($y['key'])) {
             throw new \Error('Missing key with name key in array with name $y[]');
@@ -80,7 +80,7 @@ trait EntityRepositoryTrait
         if (!isset($x['val'])) {
             $x['val'] = $x['key'];
         }
-        if (!isset($o['total']) AND !isset($o['pointerToTotal'])) {
+        if (!isset($o['total']) && !isset($o['pointerToTotal'])) {
             throw new \Error('Missing one of the required keys total, pointerToTotal in array with name $o[]');
         }
     }
@@ -103,14 +103,14 @@ trait EntityRepositoryTrait
      * @param $x
      * @param $x_key
      */
-    public static function _matrixHandleLabels($result, &$r, $y, $y_key, $x, $x_key)
+    public static function _matrixHandleLabels($result, &$r, $y, $y_key, $x, $x_key): void
     {
         if (!isset($r['y'][$y_key])) {
-            $r['y'][$y_key] = (isset($y['keys'][$y_key]) ? $y['keys'][$y_key] : $result[$y['val']]);
+            $r['y'][$y_key] = ($y['keys'][$y_key] ?? $result[$y['val']]);
         }
 
         if (!isset($r['x'][$x_key])) {
-            $r['x'][$x_key] = (isset($x['keys'][$x_key]) ? $x['keys'][$x_key] : $result[$x['val']]);
+            $r['x'][$x_key] = ($x['keys'][$x_key] ?? $result[$x['val']]);
         }
     }
 
@@ -120,9 +120,9 @@ trait EntityRepositoryTrait
      * @param $y_key
      * @param $x_key
      */
-    public static function _matrixIncrementTotal(&$r, $t, $y_key, $x_key)
+    public static function _matrixIncrementTotal(&$r, $t, $y_key, $x_key): void
     {
-        $t = $t + 0;
+        $t += 0;
         $r['y_x'][$y_key][$x_key] = (!isset($r['y_x'][$y_key][$x_key])
             ? $t
             : $r['y_x'][$y_key][$x_key] + $t);
@@ -147,7 +147,7 @@ trait EntityRepositoryTrait
     /**
      * @param $r
      */
-    public static function _matrixAddTotal(&$r)
+    public static function _matrixAddTotal(&$r): void
     {
         $r['y']['Total'] = 'Total';
         $r['x']['Total'] = 'Total';
@@ -166,7 +166,7 @@ trait EntityRepositoryTrait
      * @param $y
      * @param $x
      */
-    public static function _matrixSetFirstKey(&$r, $y, $x)
+    public static function _matrixSetFirstKey(&$r, $y, $x): void
     {
         if (isset($y['first_key']) AND isset($r['y'][$y['first_key']])) {
             $first = $r['y'][$y['first_key']];
