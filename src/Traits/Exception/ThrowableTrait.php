@@ -9,7 +9,7 @@ trait ThrowableTrait
      * @param $expectedInstance
      * @throws \Throwable
      */
-    public static function NotInstanceOf($givenInstance, $expectedInstance)
+    public static function NotInstanceOf($givenInstance, $expectedInstance): void
     {
         if (is_object($expectedInstance)) {
             $expectedInstance = get_class($expectedInstance);
@@ -32,9 +32,14 @@ trait ThrowableTrait
      * @param array $errors
      * @return string
      */
-    public static function ValidationErrorsToString(array $errors)
+    public static function ValidationErrorsToString(array $errors): string
     {
         $str = '<h4>VALIDATION ERROR!</h4>';
+
+        if (empty($errors)) {
+            return $str;
+        }
+
         $str .= '<dl>';
         foreach ($errors as $error) {
             $str .= '<dt>' . strtoupper($error['propertyPath']) . '</dt>';

@@ -61,9 +61,9 @@ trait EntityTrait
      * @param array $groups
      * @param array $assignees
      * @param array $options
-     * @return mixed
+     * @return \stdClass
      */
-    public static function getMembersAllTogether(array $groups, array $assignees, array $options = [])
+    public static function getMembersAllTogether(array $groups, array $assignees, array $options = []): \stdClass
     {
         $membersAllTogether = static::getMembersOfGroupsAllTogether($groups, $options);
 
@@ -90,9 +90,9 @@ trait EntityTrait
      *
      * @param array $groups
      * @param array $options
-     * @return object
+     * @return \stdClass
      */
-    public static function getMembersOfGroupsAllTogether(array $groups, array $options = [])
+    public static function getMembersOfGroupsAllTogether(array $groups, array $options = []): \stdClass
     {
         $membersOfGroupsAllTogether = (object)[
             'collection' => new ArrayCollection(),
@@ -183,18 +183,18 @@ trait EntityTrait
     }
 
     /**
-     * @param string|array $passwordHistory
-     * @return array|mixed|string
+     * @param string $passwordHistory
+     * @return array
      */
-    public static function getPasswordHistory(string $passwordHistory)
+    public static function getPasswordHistory(string $passwordHistory): array
     {
-        $passwordHistory = unserialize($passwordHistory, [false]);
+        $passwordHistoryArray = unserialize($passwordHistory, [false]);
 
-        if (!is_array($passwordHistory)) {
-            $passwordHistory = [];
+        if (!is_array($passwordHistoryArray)) {
+            $passwordHistoryArray = [];
         }
 
-        return $passwordHistory;
+        return $passwordHistoryArray;
     }
 
     /**

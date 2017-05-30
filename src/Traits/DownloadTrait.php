@@ -88,6 +88,7 @@ trait DownloadTrait
         mkdir($path, 0777, true);
         $path = rtrim($path, '/') . '/' . bin2hex(random_bytes(20));
         file_put_contents($path, $octetStream);
+
         return $path;
     }
 
@@ -134,7 +135,7 @@ trait DownloadTrait
      * @param string $encryptionKey
      * @param array $tokenContent
      * @return Response
-     * @throws \Exception
+     * @throws \Throwable
      */
     public static function jwtGetDownloadToken(
         Request $request,
@@ -177,7 +178,7 @@ trait DownloadTrait
     /**
      * @param array $decryptedToken
      * @return BinaryFileResponse
-     * @throws \Exception
+     * @throws \Throwable
      */
     public static function jwtStreamDownload(array $decryptedToken): BinaryFileResponse
     {
@@ -204,7 +205,7 @@ trait DownloadTrait
 
     /**
      * @param array $decryptedToken
-     * @throws \Exception
+     * @throws \Throwable
      */
     public static function jwtIsValidSession(array $decryptedToken): void
     {

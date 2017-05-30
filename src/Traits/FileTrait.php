@@ -11,7 +11,7 @@ trait FileTrait
      * @param string $baseName
      * @param string $glue
      * @return string
-     * @throws \Exception
+     * @throws \Throwable
      */
     public static function sanitizeBaseName(string $baseName, string $glue = '_'): string
     {
@@ -31,7 +31,7 @@ trait FileTrait
     /**
      * @param $file
      * @return string
-     * @throws \Exception
+     * @throws \Throwable
      */
     public static function getFileExtension(File $file): string
     {

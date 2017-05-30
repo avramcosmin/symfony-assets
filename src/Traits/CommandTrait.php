@@ -118,6 +118,10 @@ trait CommandTrait
     private function _validate($entity): bool
     {
         $validator = $this->container->get('validator');
+
+        /**
+         * @var array $errors
+         */
         $errors = $validator->validate($entity);
         if (count($errors) > 0) {
             /**
@@ -126,7 +130,7 @@ trait CommandTrait
             foreach ($errors as $error) {
                 $this->logger->error(
                     $error->getPropertyPath() . ' >>> ' . $error->getMessage(),
-                    ["onew"]
+                    ['onew']
                 );
             }
             return false;
@@ -253,7 +257,7 @@ trait CommandTrait
     /**
      * @param array $commands
      */
-    private function _exec_bin_console_command(array $commands)
+    private function _exec_bin_console_command(array $commands): void
     {
         $bin_console_file_path = $this->getContainer()->get('kernel')->getRootDir()
             . '/../bin/console';

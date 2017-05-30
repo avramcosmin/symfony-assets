@@ -1028,9 +1028,9 @@ trait VariablesMapTrait
 
     /**
      * @param string $key
-     * @return mixed
+     * @return string|null
      */
-    public function getAllowedExtension(string $key)
+    public function getAllowedExtension(string $key): ?string
     {
         return static::$allowedExtensionsMap[$key] ?? null;
     }
@@ -1050,9 +1050,9 @@ trait VariablesMapTrait
 
     /**
      * @param string $extension
-     * @return mixed
+     * @return string|null
      */
-    public static function getMimeType(string $extension)
+    public static function getMimeType(string $extension): ?string
     {
         $extension = strtolower($extension);
 
@@ -1061,9 +1061,9 @@ trait VariablesMapTrait
 
     /**
      * @param string $mimeType
-     * @return mixed
+     * @return string|null
      */
-    public static function getExtensionByMimeType(string $mimeType)
+    public static function getExtensionByMimeType(string $mimeType): ?string
     {
         return static::getMimeTypesMap(true)[$mimeType] ?? null;
     }

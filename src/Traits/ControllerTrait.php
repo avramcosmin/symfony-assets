@@ -242,9 +242,9 @@ trait ControllerTrait
      * ]
      *
      * @param array $options
-     * @return mixed
+     * @return array
      */
-    public static function removalHandler(array $options)
+    public static function removalHandler(array $options): array
     {
         if (!$options['entity']) {
             throw new HttpException(404, 'Entity not found.');

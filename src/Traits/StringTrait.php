@@ -57,9 +57,9 @@ trait StringTrait
 
     /**
      * @param $str
-     * @return mixed
+     * @return string
      */
-    public static function parsedownExtra($str)
+    public static function parsedownExtra($str): string
     {
 
         if (!is_string($str) && !is_numeric($str)) {
@@ -128,23 +128,24 @@ trait StringTrait
     }
 
     /**
-     * @param $str
+     * @param string|bool $str
      * @param bool $jsonDecode
-     * @return mixed|string
+     * @return bool|mixed|string
      */
-    public static function base64url_decode($str, $jsonDecode = false)
+    public static function base64url_decode(string $str, $jsonDecode = false)
     {
         $str = strtr($str, '-_,', '+/=');
         $str = base64_decode($str);
-        if ($jsonDecode === true) {
+        if ($str && $jsonDecode === true) {
             return json_decode($str, true);
         }
+
         return $str;
     }
 
     /**
      * @param $val
-     * @return mixed
+     * @return bool|mixed
      */
     public static function isFloat($val)
     {
@@ -158,7 +159,7 @@ trait StringTrait
 
     /**
      * @param $val
-     * @return mixed
+     * @return bool|mixed
      */
     public static function isInt($val)
     {

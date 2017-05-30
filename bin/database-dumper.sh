@@ -127,8 +127,13 @@ if [ ${EXPORT_AS} == "csv" ]; then
     done
 
     # Add all CSV files to a zip archive
-    # tar -czvf ${DIST_DIR}${ARCHIVE_NAME} ${TMP_DIR}*
-    zip -rj "${DIST_DIR}${ARCHIVE_NAME}.zip" ${TMP_DIR}*
+    if command_exists tar; then
+        tar -czvf ${DIST_DIR}${ARCHIVE_NAME} ${TMP_DIR}*
+    else
+        if command_exists zip; then
+            zip -rj "${DIST_DIR}${ARCHIVE_NAME}.zip" ${TMP_DIR}*
+        fi
+    fi
 
     # Remove TMP directory
     rm -r ${TMP_DIR}
@@ -137,3 +142,7 @@ fi
 if [ ${EXPORT_AS} == "sql" ]; then
     mysqldump -u ${DB_USERNAME} -p"${DB_PASSWORD}" ${DB_NAME} | gzip -c > "${DIST_DIR}${ARCHIVE_NAME}.gz"
 fi
+
+function command_exists () {
+    type "$1" &> /dev/null ;
+}

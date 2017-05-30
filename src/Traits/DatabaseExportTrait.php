@@ -27,7 +27,7 @@ trait DatabaseExportTrait
      *
      * @param array $options
      * @return string
-     * @throws \Exception
+     * @throws \Throwable
      */
     public static function execute(array $options = []): string
     {
