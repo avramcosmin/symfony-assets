@@ -1061,9 +1061,9 @@ trait VariablesMapTrait
 
     /**
      * @param string $mimeType
-     * @return bool
+     * @return string|null
      */
-    public static function getExtensionByMimeType(string $mimeType): bool
+    public static function getExtensionByMimeType(string $mimeType): string
     {
         return static::getMimeTypesMap(true)[$mimeType] ?? null;
     }
