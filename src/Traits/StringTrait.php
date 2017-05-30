@@ -57,7 +57,7 @@ trait StringTrait
 
     /**
      * @param $str
-     * @return mixed|string
+     * @return mixed
      */
     public static function parsedownExtra($str)
     {
@@ -200,9 +200,9 @@ trait StringTrait
     /**
      * @param string $str
      * @param string $glue
-     * @return mixed
+     * @return string
      */
-    public static function sanitizeString(string $str, string $glue = '_')
+    public static function sanitizeString(string $str, string $glue = '_'): string
     {
         $str = Encoding::toUTF8($str);
 

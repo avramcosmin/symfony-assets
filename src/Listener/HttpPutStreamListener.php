@@ -170,7 +170,7 @@ class HttpPutStreamListener
      * @param $string
      * @return array
      */
-    private function post($string)
+    private function post($string): array
     {
         $data = [];
 
