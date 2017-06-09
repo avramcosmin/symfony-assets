@@ -21,6 +21,6 @@ trait EntityQueryBuilderTrait
      */
     static public function join(array $entitiesAndTheirAliases, string $joiningStrategy = 'LEFT'): string
     {
-        return implode(' ' . $joiningStrategy, $entitiesAndTheirAliases);
+        return implode(' ' . $joiningStrategy . ' ', $entitiesAndTheirAliases);
     }
 }
