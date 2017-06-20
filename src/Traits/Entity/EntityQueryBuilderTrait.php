@@ -11,7 +11,7 @@ trait EntityQueryBuilderTrait
      */
     static public function select(array $cols, string $entityAndAlias): string
     {
-        return 'SELECT' . implode(', ', $cols) . ' FROM ' . $entityAndAlias;
+        return 'SELECT ' . implode(', ', $cols) . ' FROM ' . $entityAndAlias;
     }
 
     /**
