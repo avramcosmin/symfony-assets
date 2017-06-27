@@ -128,7 +128,7 @@ if [ ${EXPORT_AS} == "csv" ]; then
 
     # Add all CSV files to a zip archive
     if command_exists tar; then
-        tar -czvf ${DIST_DIR}${ARCHIVE_NAME} ${TMP_DIR}*
+        tar -czvf "${DIST_DIR}${ARCHIVE_NAME}.zip" ${TMP_DIR}*
     else
         if command_exists zip; then
             zip -rj "${DIST_DIR}${ARCHIVE_NAME}.zip" ${TMP_DIR}*
