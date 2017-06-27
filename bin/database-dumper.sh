@@ -127,13 +127,14 @@ if [ ${EXPORT_AS} == "csv" ]; then
     done
 
     # Add all CSV files to a zip archive
-    if command_exists tar; then
-        tar -czvf "${DIST_DIR}${ARCHIVE_NAME}.zip" ${TMP_DIR}*
-    else
-        if command_exists zip; then
-            zip -rj "${DIST_DIR}${ARCHIVE_NAME}.zip" ${TMP_DIR}*
-        fi
-    fi
+    #    if command_exists tar; then
+    #        tar -czvf "${DIST_DIR}${ARCHIVE_NAME}.zip" ${TMP_DIR}*
+    #    else
+    #        if command_exists zip; then
+    #            zip -rj "${DIST_DIR}${ARCHIVE_NAME}.zip" ${TMP_DIR}*
+    #        fi
+    #    fi
+    zip -rj "${DIST_DIR}${ARCHIVE_NAME}.zip" ${TMP_DIR}*
 
     # Remove TMP directory
     rm -r ${TMP_DIR}
