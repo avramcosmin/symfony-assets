@@ -9,7 +9,7 @@ trait EntityQueryBuilderTrait
      * @param string $entityAndAlias
      * @return string
      */
-    static public function select(array $cols, string $entityAndAlias): string
+    public static function select(array $cols, string $entityAndAlias): string
     {
         return 'SELECT ' . implode(', ', $cols) . ' FROM ' . $entityAndAlias;
     }
@@ -19,7 +19,7 @@ trait EntityQueryBuilderTrait
      * @param string $joiningStrategy
      * @return string
      */
-    static public function join(array $entitiesAndTheirAliases, string $joiningStrategy = 'LEFT'): string
+    public static function join(array $entitiesAndTheirAliases, string $joiningStrategy = 'LEFT'): string
     {
         return implode(' ' . $joiningStrategy . ' ', $entitiesAndTheirAliases);
     }

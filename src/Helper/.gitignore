@@ -8,5 +8,7 @@
 !EntityRepositoryHelper.php
 !FileHelper.php
 !GlobalHelper.php
+!RequestHelper.php
+!ResponseHelper.php
 !StringHelper.php
 !ThrowableHelper.php

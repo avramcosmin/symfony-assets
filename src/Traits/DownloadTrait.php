@@ -85,7 +85,10 @@ trait DownloadTrait
         /**
          * make sure the directory exists to avoid errors
          */
-        mkdir($path, 0777, true);
+        try {
+            mkdir($path, 0777, true);
+        } catch (\Throwable $e) {
+        }
         $path = rtrim($path, '/') . '/' . bin2hex(random_bytes(20));
         file_put_contents($path, $octetStream);
 
@@ -186,8 +189,7 @@ trait DownloadTrait
 
         return static::streamFileContentOrDownload(
             $decryptedToken['file_path'],
-            $decryptedToken['file_name'] ?? null,
-            true
+            $decryptedToken['file_name'] ?? null
         );
     }
 

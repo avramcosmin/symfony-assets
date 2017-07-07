@@ -2,284 +2,210 @@
 
 namespace Mindlahus\SymfonyAssets\Traits;
 
-use FOS\RestBundle\View\View;
+use Doctrine\Common\Persistence\ObjectManager;
 use FOS\RestBundle\View\ViewHandler;
+use Mindlahus\SymfonyAssets\AbstractInterface\ResourceAbstract;
 use Mindlahus\SymfonyAssets\Exception\ValidationFailedException;
+use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 trait ControllerTrait
 {
-    /**
-     * $options = [
-     *  entityResource      optional    EntityResource
-     *  statusCode          optional    Response status code
-     * ]
-     *
-     * @param $data
-     * @param ViewHandler $viewHandler
-     * @param array $groups
-     * @param array $options
-     * @return Response
-     */
-    public static function Serialize(
-        $data,
-        ViewHandler $viewHandler,
-        array $groups = [],
-        array $options = []
-    ): Response
-    {
-        $view = new View();
-        $view->setData(['data' => $data]);
-        if (!empty($groups)) {
-            $view->getContext()->setGroups($groups);
-        }
-
-        if ($options['statusCode'] ?? null) {
-            $view->setStatusCode($options['statusCode']);
-        }
-
-        $request = null;
-        /**
-         * Because of the anatomy of PUT requests, we use the new instance of the Request set inside ResourceAbstract
-         */
-        if ($options['entityResource'] ?? null) {
-            $request = $options['entityResource']->getRequest();
-        }
-
-        return $viewHandler->handle($view, $request);
-    }
 
     /**
-     * todo : what is the shape of the response?
-     * todo : what is the impact of extending FosController?
-     * todo : how the response differs from findOneBy to findBy?
-     *
-     * $options = [
-     *  arguments       required    array
-     *  repository      required    string
-     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
-     *  method          optional    string
-     * ]
-     *
-     * @param array $options
+     * @param ResourceAbstract $entityResource
+     * @param string $method
+     * @param $entity
+     * @param ValidatorInterface $validator
+     * @param ObjectManager $em
      * @return mixed
-     * @throws \Throwable
      */
-    public static function findOneBy(array $options = [])
+    public static function EntityCreate(
+        ResourceAbstract $entityResource,
+        string $method,
+        $entity,
+        ValidatorInterface $validator,
+        ObjectManager $em
+    )
     {
-        $data = $options['entityManager']->getRepository(
-            $options['repository']
-        )->{$options['method'] ?? 'findOneBy'}($options['arguments']);
-
-        if (!$data) {
-            throw new HttpException(404, 'Entity not found.');
-        }
-
-        return $data;
-    }
-
-    /**
-     * $options = [
-     *  arguments       required    array
-     *  repository      required    string
-     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
-     *  viewHandler     required    \FOS\RestBundle\View\ViewHandler
-     *  method          optional    string
-     *  groups          optional    array
-     * ]
-     *
-     * @param array $options
-     * @return Response
-     */
-    public static function SerializeFindOneBy(array $options): Response
-    {
-        return self::Serialize(
-            self::findOneBy($options),
-            $options['viewHandler'],
-            $options['groups']
+        return static::EntityChangeOrCreate(
+            $entityResource,
+            $method,
+            $entity,
+            $validator,
+            $em,
+            true
         );
     }
 
     /**
-     * $options = [
-     *  arguments       required    array
-     *  repository      required    string
-     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
-     *  method          optional    string
-     * ]
-     *
-     * @param array $options
+     * @param ResourceAbstract $entityResource
+     * @param string $method
+     * @param $entity
+     * @param ValidatorInterface $validator
+     * @param ObjectManager $em
      * @return mixed
      */
-    public static function findBy(array $options = [])
+    public static function EntityChange(
+        ResourceAbstract $entityResource,
+        string $method,
+        $entity,
+        ValidatorInterface $validator,
+        ObjectManager $em
+    )
     {
-        return $options['entityManager']->getRepository(
-            $options['repository']
-        )->{$options['method'] ?? 'findBy'}($options['arguments']);
-    }
-
-    /**
-     * $options = [
-     *  arguments       required    array
-     *  repository      required    string
-     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
-     *  viewHandler     required    \FOS\RestBundle\View\ViewHandler
-     *  method          optional    string
-     *  groups          optional    array
-     * ]
-     *
-     * @param array $options
-     * @return Response
-     */
-    public static function SerializeFindBy(array $options): Response
-    {
-        return self::Serialize(
-            self::findBy($options),
-            $options['viewHandler'],
-            $options['groups']
+        return static::EntityChangeOrCreate(
+            $entityResource,
+            $method,
+            $entity,
+            $validator,
+            $em
         );
     }
 
     /**
-     * $options = [
-     *  repository      required    string
-     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
-     *  method          optional    string
-     * ]
-     *
-     * @param array $options
-     * @return mixed
+     * @param $entity
+     * @param ObjectManager $em
      */
-    public static function findAll(array $options)
+    public static function EntityRemove(
+        $entity,
+        ObjectManager $em
+    ): void
     {
-        return $options['entityManager']->getRepository(
-            $options['repository']
-        )->{$options['method'] ?? 'findAll'}();
+        $em->remove($entity);
+        $em->flush();
     }
 
     /**
-     * $options = [
-     *  repository      required    string
-     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
-     *  viewHandler     required    \FOS\RestBundle\View\ViewHandler
-     *  method          optional    string
-     *  groups          optional    array
-     * ]
-     *
-     * @param array $options
-     * @return Response
-     */
-    public static function SerializeFindAll(array $options): Response
-    {
-        return self::Serialize(
-            self::findAll($options),
-            $options['viewHandler'],
-            $options['groups']
-        );
-    }
-
-    /**
-     * $options = [
-     *  entityResource  required    Class that extends \Mindlahus\SymfonyAssets\AbstractInterface\ResourceAbstract
-     *  method          required    string
-     *  entity          required    Instance of an Entity class
-     *  persist         optional    boolean
-     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
-     *  validator       required    ValidatorInterface
-     * ]
-     *
-     * @param array $options
+     * @param ResourceAbstract $entityResource
+     * @param string $method
+     * @param $entity
+     * @param ValidatorInterface $validator
+     * @param ObjectManager $em
+     * @param bool $persist
      * @return mixed
      */
-    public static function persistenceHandler(array $options)
+    private static function EntityChangeOrCreate(
+        ResourceAbstract $entityResource,
+        string $method,
+        $entity,
+        ValidatorInterface $validator,
+        ObjectManager $em,
+        bool $persist = false
+    )
     {
-        $options['entityResource']->{$options['method']}($options['entity']);
-        $errors = $options['validator']->validate($options['entity']);
+        $entityResource->{$method}($entity);
+        $errors = $validator->validate($entity);
         if (count($errors) > 0) {
             throw new ValidationFailedException($errors);
         }
 
-        if ($options['persist'] ?? null) {
-            $options['entityManager']->persist($options['entity']);
+        if ($persist === true) {
+            $em->persist($entity);
         }
+        $em->flush();
 
-        $options['entityManager']->flush();
-
-        return $options['entity'];
-
+        return $entity;
     }
 
     /**
-     * $options = [
-     *  entityResource  required    Class that extends \Mindlahus\SymfonyAssets\AbstractInterface\ResourceAbstract
-     *  method          required    string
-     *  entity          required    Instance of an Entity class
-     *  persist         optional    boolean
-     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
-     *  viewHandler     required    \FOS\RestBundle\View\ViewHandler
-     *  groups          optional    array
-     *  validator       required    ValidatorInterface
-     * ]
-     *
-     * @param array $options
+     * @param ResourceAbstract $entityResource
+     * @param string $method
+     * @param $entity
+     * @param ValidatorInterface $validator
+     * @param ObjectManager $em
+     * @param ViewHandler $viewHandler
+     * @param array $groups
+     * @param int|null $statusCode
      * @return Response
      */
-    public static function SerializedPersistenceHandler(array $options): Response
+    public static function CreateAndSerialize(
+        ResourceAbstract $entityResource,
+        string $method,
+        $entity,
+        ValidatorInterface $validator,
+        ObjectManager $em,
+        ViewHandler $viewHandler,
+        array $groups = [],
+        int $statusCode = null
+    ): Response
     {
-        return self::Serialize(
-            self::persistenceHandler($options),
-            $options['viewHandler'],
-            $options['groups'],
-            $options
+        return ResponseHelper::Serialize(
+            static::EntityCreate(
+                $entityResource,
+                $method,
+                $entity,
+                $validator,
+                $em
+            ),
+            $viewHandler,
+            $groups,
+            $statusCode
         );
     }
 
     /**
-     * $options = [
-     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
-     *  entity          required    Instance of an Entity class
-     * ]
-     *
-     * @param array $options
-     * @return array
+     * @param ResourceAbstract $entityResource
+     * @param string $method
+     * @param $entity
+     * @param ValidatorInterface $validator
+     * @param ObjectManager $em
+     * @param ViewHandler $viewHandler
+     * @param array $groups
+     * @param int|null $statusCode
+     * @return Response
      */
-    public static function removalHandler(array $options): array
+    public static function ChangeAndSerialize(
+        ResourceAbstract $entityResource,
+        string $method,
+        $entity,
+        ValidatorInterface $validator,
+        ObjectManager $em,
+        ViewHandler $viewHandler,
+        array $groups = [],
+        int $statusCode = null
+    ): Response
     {
-        if (!$options['entity']) {
-            throw new HttpException(404, 'Entity not found.');
-        }
-
-        $options['entityManager']->remove($options['entity']);
-        $options['entityManager']->flush();
-
-        return [
-            'code' => 204,
-            'message' => 'Entity successful deleted.'
-        ];
+        return ResponseHelper::Serialize(
+            static::EntityChange(
+                $entityResource,
+                $method,
+                $entity,
+                $validator,
+                $em
+            ),
+            $viewHandler,
+            $groups,
+            $statusCode,
+            $entityResource->getRequest()
+        );
     }
 
     /**
-     * $options = [
-     *  entity          required    Instance of an Entity class
-     *  entityManager   required    \Doctrine\Common\Persistence\ObjectManager
-     *  viewHandler     required    \FOS\RestBundle\View\ViewHandler
-     *  groups          optional    array
-     * ]
-     *
-     * @param array $options
+     * @param $entity
+     * @param ObjectManager $em
+     * @param ViewHandler $viewHandler
+     * @param array $groups
      * @return Response
      */
-    public static function SerializedRemovalHandler(array $options): Response
+    public static function RemoveAndSerialize(
+        $entity,
+        ObjectManager $em,
+        ViewHandler $viewHandler,
+        array $groups = []
+    ): Response
     {
-        $response = self::removalHandler($options);
-        $options['statusCode'] = $response['code'];
+        static::EntityRemove($entity, $em);
 
-        return self::Serialize(
-            $response,
-            $options['viewHandler'],
-            $options['groups'],
-            $options
+        return ResponseHelper::Serialize(
+            [
+                'code' => 204,
+                'message' => 'Entity successful deleted.'
+            ],
+            $viewHandler,
+            $groups,
+            204
         );
     }
 }

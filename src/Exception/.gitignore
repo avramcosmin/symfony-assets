@@ -1,3 +1,4 @@
 /*
 !.gitignore
+!NotFoundException.php
 !ValidationFailedException.php

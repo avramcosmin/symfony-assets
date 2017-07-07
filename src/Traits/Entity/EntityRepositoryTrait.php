@@ -5,6 +5,9 @@ namespace Mindlahus\SymfonyAssets\Traits\Entity;
 trait EntityRepositoryTrait
 {
     /**
+     *
+     * @deprecated
+     *
      * @param array $results
      * @param array $y
      * @param array $x
@@ -61,6 +64,8 @@ trait EntityRepositoryTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param $x
      * @param $y
      * @param $o
@@ -86,6 +91,8 @@ trait EntityRepositoryTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param $result
      * @param $o
      * @return mixed
@@ -96,6 +103,8 @@ trait EntityRepositoryTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param $result
      * @param $r
      * @param $y
@@ -115,6 +124,8 @@ trait EntityRepositoryTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param $r
      * @param $t
      * @param $y_key
@@ -145,6 +156,8 @@ trait EntityRepositoryTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param $r
      */
     public static function _matrixAddTotal(&$r): void
@@ -162,6 +175,8 @@ trait EntityRepositoryTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param $r
      * @param $y
      * @param $x

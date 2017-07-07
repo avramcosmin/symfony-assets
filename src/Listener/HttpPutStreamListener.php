@@ -57,10 +57,10 @@ class HttpPutStreamListener
     }
 
     /**
-     * @param $boundary
+     * @param string $boundary
      * @return array
      */
-    private function split($boundary): array
+    private function split(string $boundary): array
     {
         $result = preg_split("/-+$boundary/", $this->input);
         array_pop($result);
@@ -97,10 +97,10 @@ class HttpPutStreamListener
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return array
      */
-    private function decide($string): array
+    private function decide(string $string): array
     {
         if (strpos($string, 'application/octet-stream') !== FALSE) {
             return array(
@@ -123,10 +123,10 @@ class HttpPutStreamListener
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return array
      */
-    private function file($string): array
+    private function file(string $string): array
     {
         preg_match('/name=\"([^\"]*)\".*stream[\n|\r]+([^\n\r].*)?$/s', $string, $match);
         return [
@@ -135,10 +135,10 @@ class HttpPutStreamListener
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return array
      */
-    private function file_stream($string): array
+    private function file_stream(string $string): array
     {
         $data = [];
 
@@ -151,7 +151,7 @@ class HttpPutStreamListener
 
         $err = file_put_contents($path, trim($image));
 
-        if (preg_match('/^(.*)\[\]$/i', $match[1], $tmp)) {
+        if (preg_match('/^(.*)\[\]$/', $match[1], $tmp)) {
             $index = $tmp[1];
         } else {
             $index = $match[1];
@@ -167,16 +167,16 @@ class HttpPutStreamListener
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return array
      */
-    private function post($string): array
+    private function post(string $string): array
     {
         $data = [];
 
         preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $string, $match);
 
-        if (preg_match('/^(.*)\[\]$/i', $match[1], $tmp)) {
+        if (preg_match('/^(.*)\[\]$/', $match[1], $tmp)) {
             $data[$tmp[1]][] = $match[2] ?? '';
         } else {
             $data[$match[1]] = $match[2] ?? '';
@@ -186,10 +186,10 @@ class HttpPutStreamListener
     }
 
     /**
-     * @param $array
+     * @param array $array
      * @return array
      */
-    private function merge($array): array
+    private function merge(array $array): array
     {
         $results = array(
             'request' => [],
@@ -197,10 +197,21 @@ class HttpPutStreamListener
             'isEmptyPutStream' => true
         );
 
-        if (count($array['request']) > 0) {
-            foreach ($array['request'] as $key => $value) {
+        /**
+         * @var array $request
+         * @var array $files
+         */
+        [$request, $files] = $array;
+        if (count($request) > 0) {
+            foreach ($request as $key => $value) {
+                /**
+                 * @var array $value
+                 */
                 foreach ($value as $k => $v) {
                     if (is_array($v)) {
+                        /**
+                         * @var array $v
+                         */
                         foreach ($v as $kk => $vv) {
                             $results['request'][$k][] = $vv;
                         }
@@ -212,14 +223,20 @@ class HttpPutStreamListener
             $results['isEmptyPutStream'] = false;
         }
 
-        if (count($array['files']) > 0) {
-            foreach ($array['files'] as $key => $value) {
+        if (count($files) > 0) {
+            foreach ($files as $key => $value) {
+                /**
+                 * @var array $value
+                 */
                 foreach ($value as $k => $v) {
                     if (is_array($v)) {
+                        /**
+                         * @var array $v
+                         */
                         foreach ($v as $kk => $vv) {
                             if (
                                 is_array($vv)
-                                && (count($vv) == 1)
+                                && (count($vv) === 1)
                             ) {
                                 $results['files'][$k][$kk] = trim($vv[0]);
                             } else {

@@ -3,12 +3,15 @@
 !Exception
 !.gitignore
 !CommandTrait.php
+!ControllerDeprecatedTrait.php
 !ControllerTrait.php
 !CryptoTrait.php
 !DatabaseExportTrait.php
 !DownloadTrait.php
 !FileTrait.php
 !GlobalTrait.php
+!RequestTrait.php
+!ResponseTrait.php
 !StringTrait.php
 !TestTrait.php
 !VariablesMapTrait.php
