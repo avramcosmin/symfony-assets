@@ -9,30 +9,30 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-abstract class ResourceAbstract
+abstract class ResourceAbstract implements ResourceAbstractInterface
 {
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
     /**
      * @var ObjectManager
      */
-    private $entityManager;
+    protected $entityManager;
     /**
      * @var Logger $logger
      */
-    private $logger;
+    protected $logger;
     /**
      * @var PropertyAccess
      */
-    private $accessor;
+    protected $accessor;
     /**
      * @var ContainerInterface
      */
-    private $container;
+    protected $container;
 
-    private $requestContent;
+    protected $requestContent;
 
     /**
      * todo : check that the logger actually works

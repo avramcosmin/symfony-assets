@@ -3,3 +3,4 @@
 !ControlFieldInterface.php
 !NameInterface.php
 !ResourceAbstract.php
+!ResourceAbstractInterface.php
