@@ -201,7 +201,8 @@ class HttpPutStreamListener
          * @var array $request
          * @var array $files
          */
-        [$request, $files] = $array;
+        ['request' => $request, 'files' => $files] = $array;
+
         if (count($request) > 0) {
             foreach ($request as $key => $value) {
                 /**
