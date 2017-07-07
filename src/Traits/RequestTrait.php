@@ -13,21 +13,26 @@ trait RequestTrait
     public static function initialize(Request $request): void
     {
         /**
-         * The scope is only to properly initialize the Request $request on PUT requests
+         * Do this only if the Request $request is passed by the container
          */
-        $httpPutStreamListener = new HttpPutStreamListener();
-        $data = $httpPutStreamListener->getData(
-            $request
-        );
-        if (!$data['isEmptyPutStream']) {
-            $request->initialize(
-                [],
-                $data['request'],
-                [],
-                [],
-                $data['files']
+        if ($_SERVER['CONTENT_TYPE'] ?? null) {
+            /**
+             * The scope is only to properly initialize the Request $request on PUT requests
+             */
+            $httpPutStreamListener = new HttpPutStreamListener();
+            $data = $httpPutStreamListener->getData(
+                $request
             );
-            $request->setRequestFormat('json');
+            if (!$data['isEmptyPutStream']) {
+                $request->initialize(
+                    [],
+                    $data['request'],
+                    [],
+                    [],
+                    $data['files']
+                );
+                $request->setRequestFormat('json');
+            }
         }
     }
 
