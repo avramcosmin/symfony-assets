@@ -14,8 +14,9 @@ trait RequestTrait
     {
         /**
          * Do this only if the Request $request is passed by the container
+         * and only if it is the case of a PUT request
          */
-        if ($_SERVER['CONTENT_TYPE'] ?? null) {
+        if (($_SERVER['CONTENT_TYPE'] ?? null) && !static::isJSON($request)) {
             /**
              * The scope is only to properly initialize the Request $request on PUT requests
              */
@@ -46,10 +47,7 @@ trait RequestTrait
         /**
          * GET, DELETE request
          */
-        if (method_exists($request, 'getContentType')
-            &&
-            $request->getContentType() === 'json'
-        ) {
+        if (static::isJSON($request)) {
             return json_decode($request->getContent());
         }
 
@@ -66,5 +64,16 @@ trait RequestTrait
         }
 
         return new \stdClass();
+    }
+
+    /**
+     * @param Request $request
+     * @return bool
+     */
+    private static function isJSON(Request $request): bool
+    {
+        return method_exists($request, 'getContentType')
+            &&
+            $request->getContentType() === 'json';
     }
 }
