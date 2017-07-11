@@ -117,7 +117,7 @@ if [ ${EXPORT_AS} == "csv" ]; then
         if [ "${ALLOWED_TABLE_PREFIXES}" == "all" ]; then
             dumpToCSV
         else
-            IFS='|' read -ra ADDR <<< "${ALLOWED_TABLE_PREFIXES}"
+            IFS=',' read -ra ADDR <<< "${ALLOWED_TABLE_PREFIXES}"
             for i in "${ADDR[@]}"; do
                 if [ "${i}" == "${TABLE:0:${#i}}" ]; then
                     dumpToCSV

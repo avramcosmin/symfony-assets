@@ -74,7 +74,7 @@ trait DatabaseExportTrait
                 . ' --dist ' . $options['dist_dir']
                 . ' --tmp ' . $options['tmp_dir']
                 . ' --name ' . $options['archive_name']
-                . ' --prefixes ' . implode('|', $options['allowed_table_prefixes'])
+                . ' --prefixes ' . implode(',', $options['allowed_table_prefixes'])
             );
         } catch (\Throwable $e) {
             throw new \Exception('Failed to executing `database-dumper.sh`.', 0, $e);
