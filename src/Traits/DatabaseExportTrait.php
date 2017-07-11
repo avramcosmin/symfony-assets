@@ -85,7 +85,7 @@ trait DatabaseExportTrait
                 $ext = '.zip';
                 break;
             case $options['export_as'] === 'sql':
-                $ext = '.gz';
+                $ext = '.sql.gz';
                 break;
             default:
                 $ext = '';

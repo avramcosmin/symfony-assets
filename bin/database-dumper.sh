@@ -141,7 +141,7 @@ if [ ${EXPORT_AS} == "csv" ]; then
 fi
 
 if [ ${EXPORT_AS} == "sql" ]; then
-    mysqldump -u ${DB_USERNAME} -p"${DB_PASSWORD}" ${DB_NAME} | gzip -c > "${DIST_DIR}${ARCHIVE_NAME}.gz"
+    mysqldump -u ${DB_USERNAME} -p"${DB_PASSWORD}" ${DB_NAME} | gzip -c > "${DIST_DIR}${ARCHIVE_NAME}.sql.gz"
 fi
 
 function command_exists () {
