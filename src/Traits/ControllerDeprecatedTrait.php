@@ -32,14 +32,18 @@ trait ControllerDeprecatedTrait
     ): Response
     {
         $view = new View();
-        $view->setData(['data' => $data]);
-        $view->setHeader('Content-Type', 'application/json');
-        if (!empty($groups)) {
-            $view->getContext()->setGroups($groups);
-        }
 
         if ($options['statusCode'] ?? null) {
             $view->setStatusCode($options['statusCode']);
+        }
+        $view->setData([
+            'status' => $view->getStatusCode(),
+            'code' => null,
+            'data' => $data
+        ]);
+        $view->setHeader('Content-Type', 'application/json');
+        if (!empty($groups)) {
+            $view->getContext()->setGroups($groups);
         }
 
         $request = null;

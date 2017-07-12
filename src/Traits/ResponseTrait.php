@@ -40,6 +40,7 @@ trait ResponseTrait
         if ($statusCode !== Response::HTTP_NO_CONTENT) {
             $view->setData([
                 'status' => $view->getStatusCode(),
+                'code' => null,
                 'data' => $data
             ]);
             if (!empty($groups)) {
