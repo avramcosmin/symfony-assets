@@ -36,11 +36,7 @@ trait ControllerDeprecatedTrait
         if ($options['statusCode'] ?? null) {
             $view->setStatusCode($options['statusCode']);
         }
-        $view->setData([
-            'status' => $view->getStatusCode(),
-            'code' => null,
-            'data' => $data
-        ]);
+        $view->setData(['data' => $data]);
         $view->setHeader('Content-Type', 'application/json');
         if (!empty($groups)) {
             $view->getContext()->setGroups($groups);

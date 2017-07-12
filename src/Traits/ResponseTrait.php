@@ -38,11 +38,7 @@ trait ResponseTrait
         $view = new View();
         $view->setStatusCode($statusCode ?? 200);
         if ($statusCode !== Response::HTTP_NO_CONTENT) {
-            $view->setData([
-                'status' => $view->getStatusCode(),
-                'code' => null,
-                'data' => $data
-            ]);
+            $view->setData(['data' => $data]);
             if (!empty($groups)) {
                 $view->getContext()->setGroups($groups);
             }
