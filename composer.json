@@ -2,18 +2,23 @@
     "name": "mindlahus/symfony-assets",
     "description": "A list of PHP classes that will help you develop fast & easy various API's.",
     "repositories": [
-      {
-        "type": "package",
-        "package": {
-          "name": "avramcosmin/forceutf8",
-          "version": "2.0.1",
-          "source": {
-            "url": "https://github.com/avramcosmin/forceutf8",
-            "type": "git",
-            "reference": "master"
+        {
+            "type": "package",
+            "package": {
+                "name": "avramcosmin/forceutf8",
+                "version": "2.0.1",
+                "source": {
+                    "url": "https://github.com/avramcosmin/forceutf8",
+                    "type": "git",
+                    "reference": "master"
+                },
+                "autoload": {
+                    "psr-0": {
+                      "ForceUTF8\\": "src/"
+                    }
+                }
           }
         }
-      }
     ],
     "require": {
         "doctrine/orm": "^2.5",

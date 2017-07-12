@@ -3,6 +3,7 @@
 namespace Mindlahus\SymfonyAssets\EventListener;
 
 use Mindlahus\SymfonyAssets\Exception\ValidationFailedException;
+use Mindlahus\SymfonyAssets\Helper\ThrowableHelper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -17,20 +18,27 @@ class ExceptionListener
     public function onKernelException(GetResponseForExceptionEvent $event): void
     {
         $exception = $event->getException();
-        $code = $this->getStatusCode($exception);
+        $statusCode = $this->getStatusCode($exception);
         $message = $exception->getMessage();
         if ($exception instanceof ValidationFailedException) {
             $message = json_decode($message);
         }
 
         $responseData = [
+            'status' => $statusCode,
             'error' => [
-                'code' => $code,
+                'code' => $exception->getCode() ?? ThrowableHelper::NO_ERROR_CODE,
                 'message' => $message
             ]
         ];
 
-        $event->setResponse(new JsonResponse($responseData, $code));
+        $event->setResponse(new JsonResponse(
+            $responseData,
+            $statusCode,
+            [
+                'Content-Type' => 'application/json'
+            ]
+        ));
     }
 
     /**

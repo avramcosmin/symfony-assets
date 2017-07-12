@@ -33,6 +33,7 @@ trait ControllerDeprecatedTrait
     {
         $view = new View();
         $view->setData(['data' => $data]);
+        $view->setHeader('Content-Type', 'application/json');
         if (!empty($groups)) {
             $view->getContext()->setGroups($groups);
         }

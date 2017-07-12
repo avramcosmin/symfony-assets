@@ -2,7 +2,6 @@
 
 namespace Mindlahus\SymfonyAssets\Traits;
 
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 trait FileTrait
@@ -29,38 +28,35 @@ trait FileTrait
     }
 
     /**
-     * @param $file
+     * @param \SplFileInfo $file
      * @return string
-     * @throws \Throwable
      */
-    public static function getFileExtension(File $file): string
+    public static function getFileExtension(\SplFileInfo $file): string
     {
         if ($file instanceof UploadedFile) {
             $fileName = $file->getClientOriginalName();
-        } elseif ($file instanceof File) {
-            $fileName = $file->getFilename();
         } else {
-            throw new \Exception('Not an instance of file.');
+            $fileName = $file->getFilename();
         }
 
         return static::getExtension($fileName);
     }
 
     /**
-     * @param string $fileName
+     * @param string $filePath
      * @return string
      */
-    public static function getExtension(string $fileName): string
+    public static function getExtension(string $filePath): string
     {
-        return strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        return strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
     }
 
     /**
-     * @param string $fileName
+     * @param string $filePath
      * @return string
      */
-    public static function getFileBaseName(string $fileName): string
+    public static function getFileBaseName(string $filePath): string
     {
-        return pathinfo($fileName, PATHINFO_BASENAME);
+        return pathinfo($filePath, PATHINFO_BASENAME);
     }
 }

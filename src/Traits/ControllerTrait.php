@@ -128,7 +128,7 @@ trait ControllerTrait
         ObjectManager $em,
         ViewHandler $viewHandler,
         array $groups = [],
-        int $statusCode = null
+        int $statusCode = Response::HTTP_CREATED
     ): Response
     {
         return ResponseHelper::Serialize(
@@ -141,7 +141,8 @@ trait ControllerTrait
             ),
             $viewHandler,
             $groups,
-            $statusCode
+            $statusCode,
+            $entityResource->getRequest()
         );
     }
 
@@ -199,13 +200,10 @@ trait ControllerTrait
         static::EntityRemove($entity, $em);
 
         return ResponseHelper::Serialize(
-            [
-                'code' => 204,
-                'message' => 'Entity successful deleted.'
-            ],
+            [],
             $viewHandler,
             $groups,
-            204
+            Response::HTTP_NO_CONTENT
         );
     }
 }

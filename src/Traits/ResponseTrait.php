@@ -10,7 +10,15 @@ use Symfony\Component\HttpFoundation\Response;
 trait ResponseTrait
 {
     /**
-     * For PUT requests make sure you call RequestHelper::initialize() and then pass Request $request
+     * For PUT/POST requests that upload files
+     * make sure you pass the Request $request argument
+     * but only after you call RequestHelper::initialize()
+     *
+     * Returns \stdClass()
+     * {
+     *      code,
+     *      data (array, \stdClass)
+     * }
      *
      * @param $data
      * @param ViewHandler $viewHandler
@@ -28,14 +36,18 @@ trait ResponseTrait
     ): Response
     {
         $view = new View();
-        $view->setData(['data' => $data]);
-        if (!empty($groups)) {
-            $view->getContext()->setGroups($groups);
+        $view->setStatusCode($statusCode ?? 200);
+        if ($statusCode !== Response::HTTP_NO_CONTENT) {
+            $view->setData([
+                'status' => $view->getStatusCode(),
+                'data' => $data
+            ]);
+            if (!empty($groups)) {
+                $view->getContext()->setGroups($groups);
+            }
         }
-
-        if ($statusCode) {
-            $view->setStatusCode($statusCode);
-        }
+        $view->setHeader('Content-Type', 'application/json');
+        $view->setFormat('json');
 
         return $viewHandler->handle($view, $request);
     }

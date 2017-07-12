@@ -2,13 +2,18 @@
 
 namespace Mindlahus\SymfonyAssets\Exception;
 
+use Mindlahus\SymfonyAssets\Helper\ThrowableHelper;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ValidationFailedException extends HttpException
 {
-    public function __construct(ConstraintViolationListInterface $errors)
+    public function __construct(
+        ConstraintViolationListInterface $errors,
+        \Exception $previous = null,
+        array $headers = []
+    )
     {
         $response = [
             'message' => 'Validation failed',
@@ -25,6 +30,12 @@ class ValidationFailedException extends HttpException
             ];
         }
 
-        parent::__construct(500, json_encode($response));
+        parent::__construct(
+            500,
+            json_encode($response),
+            $previous,
+            $headers,
+            ThrowableHelper::VALIDATION_FAILED
+        );
     }
 }
