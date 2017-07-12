@@ -31,7 +31,7 @@ class ValidationFailedException extends HttpException
         }
 
         parent::__construct(
-            500,
+            200,
             json_encode($response),
             $previous,
             $headers,

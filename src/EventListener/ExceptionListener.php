@@ -26,9 +26,9 @@ class ExceptionListener
 
         $responseData = [
             'status' => $statusCode,
-            'error' => [
-                'code' => $exception->getCode() ?? ThrowableHelper::NO_ERROR_CODE,
-                'message' => $message
+            'code' => $exception->getCode() ?? ThrowableHelper::NO_ERROR_CODE,
+            'data' => [
+                $message
             ]
         ];
 
