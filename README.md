@@ -2,6 +2,12 @@
 
 A list of PHP classes that will help you develop fast & easy various API's.
 
+You are strongly encouraged to install `nelmio/cors-bundle`.
+
+```
+composer require nelmio/cors-bundle
+```
+
 ## Symfony services
 
 `Simfony Assets` provides multiple services. Here is the list of all available services:

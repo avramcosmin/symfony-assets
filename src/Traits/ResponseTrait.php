@@ -4,6 +4,7 @@ namespace Mindlahus\SymfonyAssets\Traits;
 
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandler;
+use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,7 +24,7 @@ trait ResponseTrait
      * @param $data
      * @param ViewHandler $viewHandler
      * @param array $groups
-     * @param int|null $statusCode
+     * @param int $statusCode
      * @param Request $request Pass this in case of a PUT request
      * @return Response
      */
@@ -31,19 +32,19 @@ trait ResponseTrait
         $data,
         ViewHandler $viewHandler,
         array $groups = [],
-        int $statusCode = null,
+        int $statusCode = 200,
         Request $request = null
     ): Response
     {
         $view = new View();
-        $view->setStatusCode($statusCode ?? 200);
-        if ($statusCode !== Response::HTTP_NO_CONTENT) {
+        $view->setStatusCode($statusCode);
+        if ($view->getStatusCode() !== Response::HTTP_NO_CONTENT) {
             $view->setData(['data' => $data]);
             if (!empty($groups)) {
                 $view->getContext()->setGroups($groups);
             }
         }
-        $view->setHeader('Content-Type', 'application/json');
+        $view->setHeaders(ResponseHelper::CORS_HEADERS);
         $view->setFormat('json');
 
         return $viewHandler->handle($view, $request);

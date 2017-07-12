@@ -3,6 +3,7 @@
 namespace Mindlahus\SymfonyAssets\EventListener;
 
 use Mindlahus\SymfonyAssets\Exception\ValidationFailedException;
+use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
 use Mindlahus\SymfonyAssets\Helper\ThrowableHelper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -35,9 +36,7 @@ class ExceptionListener
         $event->setResponse(new JsonResponse(
             $responseData,
             $statusCode,
-            [
-                'Content-Type' => 'application/json'
-            ]
+            ResponseHelper::CORS_HEADERS
         ));
     }
 

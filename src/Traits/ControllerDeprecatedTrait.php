@@ -5,6 +5,7 @@ namespace Mindlahus\SymfonyAssets\Traits;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandler;
 use Mindlahus\SymfonyAssets\Exception\ValidationFailedException;
+use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -37,7 +38,7 @@ trait ControllerDeprecatedTrait
             $view->setStatusCode($options['statusCode']);
         }
         $view->setData(['data' => $data]);
-        $view->setHeader('Content-Type', 'application/json');
+        $view->setHeaders(ResponseHelper::CORS_HEADERS);
         if (!empty($groups)) {
             $view->getContext()->setGroups($groups);
         }
