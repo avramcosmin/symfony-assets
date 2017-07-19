@@ -23,6 +23,7 @@ trait DatabaseExportTrait
      *  tmp_dir                 required    string
      *  archive_name            required    string
      *  allowed_table_prefixes  required    string
+     *  keep_tmp                optional    string
      * ]
      *
      * @param array $options
@@ -40,7 +41,8 @@ trait DatabaseExportTrait
             'dist_dir',
             'tmp_dir',
             'archive_name',
-            'allowed_table_prefixes'
+            'allowed_table_prefixes',
+            'keep_tmp'
         ])
             ->setRequired([
                 'database_name',
@@ -52,6 +54,7 @@ trait DatabaseExportTrait
                 'archive_name',
                 'allowed_table_prefixes'
             ])
+            ->setDefault('keep_tmp', false)
             ->setAllowedTypes('database_name', ['string'])
             ->setAllowedTypes('database_user', ['string'])
             ->setAllowedTypes('database_password', ['string'])
@@ -60,12 +63,12 @@ trait DatabaseExportTrait
             ->setAllowedTypes('tmp_dir', ['string'])
             ->setAllowedTypes('archive_name', ['string'])
             ->setAllowedTypes('allowed_table_prefixes', ['array'])
-            ->setAllowedValues('export_as', array('csv', 'sql'));
+            ->setAllowedTypes('keep_tmp', ['boolean'])
+            ->setAllowedValues('export_as', ['csv', 'sql']);
         $options = $resolver->resolve($options);
 
         try {
-            shell_exec(
-                'bash '
+            $cmd = 'bash '
                 . dirname(__DIR__) . '/../bin/database-dumper.sh'
                 . ' -d ' . $options['database_name']
                 . ' -u ' . $options['database_user']
@@ -74,8 +77,11 @@ trait DatabaseExportTrait
                 . ' --dist ' . $options['dist_dir']
                 . ' --tmp ' . $options['tmp_dir']
                 . ' --name ' . $options['archive_name']
-                . ' --prefixes ' . implode(',', $options['allowed_table_prefixes'])
-            );
+                . ' --prefixes ' . implode(',', $options['allowed_table_prefixes']);
+            if ($options['keep_tmp'] === true) {
+                $cmd .= ' --keep-tmp';
+            }
+            shell_exec($cmd);
         } catch (\Throwable $e) {
             throw new \Exception('Failed to executing `database-dumper.sh`.', 0, $e);
         }

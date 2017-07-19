@@ -16,21 +16,24 @@
 function _help {
 echo "Options:"
 echo -e "\t--help"
+echo -e "\t--keep-tmp"
 echo -e "\t-d [DB_NAME, database name, required]"
-echo -e "\t-u [DB_USERNAME, database username, optional]"
+echo -e "\t-u [DB_USERNAME, database username, required]"
 echo -e "\t-p [DB_PASSWORD, database password, required]"
 echo -e "\t-e [EXPORT_AS, export as type, required, string, options(csv, sql)]"
 echo -e "\t--dist [DIST_DIR, destination directory, required]"
 echo -e "\t--tmp [TMP_DIR, temporary directory, required]"
 echo -e "\t--name [ARCHIVE_NAME, export as file name, required]"
-echo -e "\t--prefixes [ALLOWED_TABLE_PREFIXES, allowed table prefixes, required, pipe, example(us_|ld|l_i)]"
+echo -e "\t--prefixes [ALLOWED_TABLE_PREFIXES, allowed table prefixes, required, pipe, example 'us_,ld,l_i']"
 echo -e "\nUsage:"
-echo -e "\tbin/database-dumper.sh -d some_database -u root -p -e csv --dist path/dist/ --tmp path/temp/ --name some_name --prefixes 'ai_|as_'"
+echo -e "\tbin/database-dumper.sh -d some_database -u root -p -e csv --dist path/dist/ --tmp path/temp/ --name some_name --prefixes 'ai_,as_'"
 echo -e "\tbin/database-dumper.sh --help"
 }
 
+KEEP_TMP=0
+
 # read the options
-TEMP=`getopt -o d:u:p::e: --long help,dist:,tmp:,name:,prefixes: -- "$@"`
+TEMP=`getopt -o d:u:p:e: --long help,keep-tmp,dist:,tmp:,name:,prefixes: -- "$@"`
 eval set -- "${TEMP}"
 
 # extract options and their arguments into variables.
@@ -78,6 +81,7 @@ while true ; do
                 "") shift 2 ;;
                 *) ALLOWED_TABLE_PREFIXES=${2}; shift 2;;
             esac ;;
+        --keep-tmp) KEEP_TMP=1 ; shift ;;
         --) shift ; break ;;
         *) echo "Internal error!" ; exit 1 ;;
     esac
@@ -136,8 +140,10 @@ if [ ${EXPORT_AS} == "csv" ]; then
     #    fi
     zip -rj "${DIST_DIR}${ARCHIVE_NAME}.zip" ${TMP_DIR}*
 
-    # Remove TMP directory
-    rm -r ${TMP_DIR}
+    if [ "${KEEP_TMP}" == "0" ]; then
+        # Remove TMP directory
+        rm -r ${TMP_DIR}
+    fi
 fi
 
 if [ ${EXPORT_AS} == "sql" ]; then
