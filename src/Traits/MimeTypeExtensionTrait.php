@@ -2,7 +2,7 @@
 
 namespace Mindlahus\SymfonyAssets\Traits;
 
-trait VariablesMapTrait
+trait MimeTypeExtensionTrait
 {
     /**
      * @var array
@@ -1017,6 +1017,15 @@ trait VariablesMapTrait
         'zirz' => 'application/vnd.zul',
         'zmm' => 'application/vnd.handheld-entertainment+xml'
     ];
+
+    /**
+     * @param array $allowedExtensionsMap
+     *
+     */
+    public static function setAllowedExtensionsMap(array $allowedExtensionsMap): void
+    {
+        static::$allowedExtensionsMap = array_merge(static::$allowedExtensionsMap, $allowedExtensionsMap);
+    }
 
     /**
      * @return array

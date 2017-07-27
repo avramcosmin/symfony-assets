@@ -4,9 +4,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-interface ResourceAbstractInterface
+interface ResourceInterface
 {
     /**
      * @param ContainerInterface $container
@@ -29,17 +29,23 @@ interface ResourceAbstractInterface
     public function getEntityManager(): ObjectManager;
 
     /**
-     * @return PropertyAccess|\Symfony\Component\PropertyAccess\PropertyAccessor
+     * @return PropertyAccessor
      */
-    public function getAccessor();
+    public function getAccessor(): PropertyAccessor;
 
     /**
-     * @return Logger|\stdClass
+     * @return Logger
      */
-    public function getLogger();
+    public function getLogger(): Logger;
 
     /**
-     * @return mixed|\stdClass
+     * @return \stdClass
      */
-    public function getRequestContent();
+    public function getRequestContent(): \stdClass;
+
+    /**
+     * @param string $msg
+     * @param string $context
+     */
+    public function log(string $msg, string $context): void;
 }

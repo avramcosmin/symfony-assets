@@ -2,14 +2,17 @@
 
 namespace Mindlahus\SymfonyAssets\Command;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Mindlahus\SymfonyAssets\AbstractInterface\CommandTraitInterface;
 use Mindlahus\SymfonyAssets\AbstractInterface\NameInterface;
 use Mindlahus\SymfonyAssets\Traits\CommandTrait;
+use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ReconcileNameCommand extends ContainerAwareCommand
+class ReconcileNameCommand extends ContainerAwareCommand implements CommandTraitInterface
 {
     use CommandTrait;
 
@@ -18,7 +21,7 @@ class ReconcileNameCommand extends ContainerAwareCommand
     protected function configure(): void
     {
         $this
-            ->setName('mindlahus:v2:reconcile:name')
+            ->setName('mindlahus:v3:reconcile:name')
             ->setDescription('Reconciles First Last & Last First names from the database.')
             ->addArgument(
                 'repository',
@@ -29,24 +32,57 @@ class ReconcileNameCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->_init($output);
+        $container = $this->getContainer();
+        /**
+         * @var ObjectManager $entityManager
+         */
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+        /**
+         * @var Logger $logger
+         */
+        $logger = $container->get('monolog.logger.onew');
+        $this->init(
+            $output,
+            $container,
+            $entityManager,
+            $logger
+        );
 
-        if (!$this->_handlePersist($output, $input->getArgument('repository'))) {
-            foreach ($this->repositories as $repository) {
-                $this->_handlePersist($output, $repository);
-            }
+        if ($input->getArgument('repository')) {
+            $this->repositories = [
+                $input->getArgument('repository')
+            ];
+        }
+        foreach ($this->repositories as $repository) {
+            $this->executeReconciliation($output, $repository);
         }
     }
 
     /**
-     * @param NameInterface $entity
-     * @return NameInterface
+     * @param OutputInterface $output
+     * @param $entity
+     * @return bool
      */
-    private function _callback(NameInterface $entity)
+    public function preEntityPrepTestFailed(OutputInterface $output, $entity): bool
+    {
+        return false;
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param NameInterface $entity
+     */
+    public function prepEntity(OutputInterface $output, $entity): void
     {
         $entity->setFirstLastName();
         $entity->setLastFirstName();
+    }
 
-        return $entity;
+    /**
+     * @param OutputInterface $output
+     * @param $entity
+     */
+    public function prePersist(OutputInterface $output, $entity): void
+    {
     }
 }

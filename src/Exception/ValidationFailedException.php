@@ -15,7 +15,7 @@ class ValidationFailedException extends HttpException
         array $headers = []
     )
     {
-        $response = [
+        $data = [
             'message' => 'Validation failed',
             'errors' => []
         ];
@@ -24,15 +24,15 @@ class ValidationFailedException extends HttpException
          * @var ConstraintViolation $error
          */
         foreach ($errors as $error) {
-            $response['errors'][] = [
+            $data['errors'][] = [
                 'propertyPath' => $error->getPropertyPath(),
                 'message' => $error->getMessage()
             ];
         }
 
         parent::__construct(
-            500,
-            json_encode($response),
+            400,
+            json_encode($data),
             $previous,
             $headers,
             ThrowableHelper::VALIDATION_FAILED

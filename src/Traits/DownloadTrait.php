@@ -3,10 +3,10 @@
 namespace Mindlahus\SymfonyAssets\Traits;
 
 use FOS\RestBundle\View\ViewHandler;
-use Mindlahus\SymfonyAssets\Helper\ControllerHelper;
 use Mindlahus\SymfonyAssets\Helper\CryptoHelper;
+use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\Stream;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -16,30 +16,42 @@ trait DownloadTrait
 
     use FileTrait;
 
+    use MimeTypeExtensionTrait;
+
     /**
      * This will send the file while the browser decides if to open or output for download.
      *
-     * @param string $path
+     * @param string $filePath
      * @param string|null $name
      * @param bool $deleteOnCompleted
+     * @param bool $inlineDisposition
+     * @param bool $knownSize
      * @return BinaryFileResponse
      */
-    public static function streamFileContentOrDownload(
-        string $path,
+    public static function StreamOrDownloadFileFromPath(
+        string $filePath,
         string $name = null,
-        bool $deleteOnCompleted = true
+        bool $deleteOnCompleted = true,
+        bool $inlineDisposition = true,
+        bool $knownSize = true
     ): BinaryFileResponse
     {
-        $name = $name ?: pathinfo($path, PATHINFO_BASENAME);
-        $response = new BinaryFileResponse($path);
+        $name = $name ?: static::getFileBaseName($filePath);
+        $stream = ($knownSize === true ? $filePath : new Stream($filePath));
+        $response = new BinaryFileResponse($stream);
 
-        $response->setStatusCode(200);
         $response->headers->set(
             'Content-Type',
-            VariablesMapTrait::getMimeType(pathinfo($name, PATHINFO_EXTENSION))
+            static::getMimeType(pathinfo($name, PATHINFO_EXTENSION))
         );
         $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            (
+            $inlineDisposition === true
+                ?
+                ResponseHeaderBag::DISPOSITION_INLINE
+                :
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT
+            ),
             $name
         );
 
@@ -47,52 +59,9 @@ trait DownloadTrait
             $response->deleteFileAfterSend(true);
         }
 
-        return $response;
-    }
-
-    /**
-     * This will send the file and mandates the browser to output for download.
-     *
-     * @param Response $response
-     * @param string $fileName
-     * @return Response
-     */
-    public static function forceDownload(Response $response, string $fileName): Response
-    {
-        $response->setStatusCode(200);
-        $response->headers->set(
-            'Content-Type',
-            'application/force-download'
-        );
-        $response->headers->set(
-            'Content-Disposition',
-            '"attachment; filename=' . $fileName . ';"'
-        );
-        // used for debug
-        // $response->sendContent();
         $response->send();
 
         return $response;
-    }
-
-    /**
-     * @param string $path
-     * @param string $octetStream
-     * @return string
-     */
-    public static function octetStreamToTmp(string $path, string $octetStream): string
-    {
-        /**
-         * make sure the directory exists to avoid errors
-         */
-        try {
-            mkdir($path, 0777, true);
-        } catch (\Throwable $e) {
-        }
-        $path = rtrim($path, '/') . '/' . bin2hex(random_bytes(20));
-        file_put_contents($path, $octetStream);
-
-        return $path;
     }
 
     /**
@@ -100,9 +69,14 @@ trait DownloadTrait
      *
      * @param string $octetStream
      * @param string $fileName
+     * @param bool $inlineDisposition
      * @return StreamedResponse
      */
-    public static function octetStreamToStreamedResponse(string $octetStream, string $fileName): StreamedResponse
+    public static function StreamOrDownloadOctetStream(
+        string $octetStream,
+        string $fileName,
+        bool $inlineDisposition = true
+    ): StreamedResponse
     {
         $response = new StreamedResponse(function () use ($octetStream) {
             $handle = fopen('php://output', 'br+');
@@ -112,28 +86,84 @@ trait DownloadTrait
             fclose($handle);
         });
 
-        $response->setStatusCode(200);
         $response->headers->set(
             'Content-Type',
-            VariablesMapTrait::getMimeType(
+            MimeTypeExtensionTrait::getMimeType(
                 static::getExtension($fileName)
             ));
-        $response->headers->set('Content-Disposition', '"inline; filename=' . $fileName . ';"');
-        // used for debug
-        // $response->sendContent();
+        $response->headers->set(
+            'Content-Disposition',
+            $response->headers->makeDisposition(
+                (
+                $inlineDisposition === true
+                    ?
+                    ResponseHeaderBag::DISPOSITION_INLINE
+                    :
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT
+                ),
+                $fileName
+            )
+        );
         $response->send();
 
         return $response;
     }
 
     /**
+     * https://www.layh.com/2014/04/18/symfony2-download-filestream-as-streamedresponse/
+     * https://stackoverflow.com/questions/13010411/symfony2-force-file-download
+     * https://stackoverflow.com/questions/39603052/symfony-download-files
+     *
+     * @param StreamedResponse|BinaryFileResponse|Response $response
+     * @param string $fileName
+     * @return Response
+     */
+    public static function ForceDownload(Response $response, string $fileName): Response
+    {
+        $response->headers->set(
+            'Content-Type',
+            'application/force-download'
+        );
+        $response->headers->set(
+            'Content-Disposition',
+            $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $fileName
+            )
+        );
+        $response->send();
+
+        return $response;
+    }
+
+    /**
+     * @param string $filePath
+     * @param string $octetStream
+     * @return string
+     */
+    public static function OctetStreamToTmpFile(string $filePath, string $octetStream): string
+    {
+        /**
+         * make sure the directory exists to avoid errors
+         */
+        try {
+            mkdir($filePath, 0777, true);
+        } catch (\Throwable $e) {
+        }
+        $filePath = rtrim($filePath, '/') . '/' . bin2hex(random_bytes(20));
+        file_put_contents($filePath, $octetStream);
+
+        return $filePath;
+    }
+
+    /**
      * $tokenContent = [
-     *  file_path           optional if ignore_file_path set boolean true
-     *  file_name           optional
-     *  direct_input        optional
+     *  filePath            optional
+     *  fileName            optional
+     *  iat                 optional
+     *  exp                 optional
      * ]
      *
-     * @param Request $request
      * @param ViewHandler $viewHandler
      * @param string $encryptionKey
      * @param array $tokenContent
@@ -141,36 +171,18 @@ trait DownloadTrait
      * @throws \Throwable
      */
     public static function jwtGetDownloadToken(
-        Request $request,
+        array $tokenContent,
         ViewHandler $viewHandler,
-        string $encryptionKey,
-        array $tokenContent = []
+        string $encryptionKey
     ): Response
     {
-        $tokenContent = array_merge($request->request->all(), $tokenContent);
-
-        if (
-            ($tokenContent['direct_input'] ?? null) !== true
-            &&
-            (
-                !is_string($tokenContent['file_path'])
-                ||
-                !file_exists($tokenContent['file_path'])
-            )
-        ) {
-            throw new \Exception('Invalid file path. String of valid file path expected.');
+        if (($tokenContent['filePath'] ?? null) && !file_exists($tokenContent['filePath'])) {
+            throw new \Exception('File does not exist. No resources returned by the provided file path.');
         }
-
-        $jwt = str_replace('Bearer ', '', $request->headers->get('Authorization'));
-        return ControllerHelper::Serialize(
+        return ResponseHelper::Serialize(
             [
-                'token' => CryptoHelper::encryptArrayToBase64(
-                    array_merge(
-                        [
-                            'jwt' => $jwt
-                        ],
-                        $tokenContent
-                    ),
+                'downloadToken' => CryptoHelper::encryptArrayToBase64(
+                    $tokenContent,
                     $encryptionKey
                 )
             ],
@@ -179,39 +191,82 @@ trait DownloadTrait
     }
 
     /**
-     * @param array $decryptedToken
+     * @param int $exp
+     * @param string $filePath
+     * @param string|null $fileName
+     * @param bool $deleteOnCompleted
+     * @param bool $inlineDisposition
+     * @param bool $knownSize
      * @return BinaryFileResponse
-     * @throws \Throwable
      */
-    public static function jwtStreamDownload(array $decryptedToken): BinaryFileResponse
+    public static function jwtStreamOrDownloadFileFromPath(
+        int $exp,
+        string $filePath,
+        string $fileName = null,
+        bool $deleteOnCompleted = true,
+        bool $inlineDisposition = true,
+        bool $knownSize = true
+    ): BinaryFileResponse
     {
-        static::jwtIsValidSession($decryptedToken);
+        static::jwtIsValidSession($exp);
 
-        return static::streamFileContentOrDownload(
-            $decryptedToken['file_path'],
-            $decryptedToken['file_name'] ?? null
+        return static::StreamOrDownloadFileFromPath(
+            $filePath,
+            $fileName,
+            $deleteOnCompleted,
+            $inlineDisposition,
+            $knownSize
+
         );
     }
 
     /**
-     * @param Response $response
-     * @param array $decryptedToken
-     * @return Response
+     * @param int $exp
+     * @param string $octetStream
+     * @param string $fileName
+     * @param bool $inlineDisposition
+     * @return StreamedResponse
      */
-    public static function jwtForceDownload(Response $response, array $decryptedToken): Response
+    public static function jwtStreamOrDownloadOctetStream(
+        int $exp,
+        string $octetStream,
+        string $fileName,
+        bool $inlineDisposition = true
+    ): StreamedResponse
     {
-        static::jwtIsValidSession($decryptedToken);
+        static::jwtIsValidSession($exp);
 
-        return static::forceDownload($response, $decryptedToken['file_name']);
+        return static::StreamOrDownloadOctetStream(
+            $octetStream,
+            $fileName,
+            $inlineDisposition
+        );
     }
 
     /**
-     * @param array $decryptedToken
-     * @throws \Throwable
+     * @param int $exp
+     * @param Response $response
+     * @param string $fileName
+     * @return Response
      */
-    public static function jwtIsValidSession(array $decryptedToken): void
+    public static function jwtForceDownload(
+        int $exp,
+        Response $response,
+        string $fileName
+    ): Response
     {
-        if (time() > $decryptedToken['exp']) {
+        static::jwtIsValidSession($exp);
+
+        return static::ForceDownload($response, $fileName);
+    }
+
+    /**
+     * @param int $time
+     * @throws \Exception
+     */
+    public static function jwtIsValidSession(int $time): void
+    {
+        if (time() > $time) {
             throw new \Exception('Invalid download session!');
         }
     }

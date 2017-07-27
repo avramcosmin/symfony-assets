@@ -5,7 +5,6 @@
 !DatabaseExportHelper.php
 !DownloadHelper.php
 !EntityHelper.php
-!EntityRepositoryHelper.php
 !FileHelper.php
 !GlobalHelper.php
 !RequestHelper.php

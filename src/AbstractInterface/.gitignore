@@ -1,6 +1,7 @@
 /*
 !.gitignore
+!CommandTraitInterface.php
 !ControlFieldInterface.php
 !NameInterface.php
 !ResourceAbstract.php
-!ResourceAbstractInterface.php
+!ResourceInterface.php

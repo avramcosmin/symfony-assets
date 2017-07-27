@@ -8,8 +8,9 @@ use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-abstract class ResourceAbstract implements ResourceAbstractInterface
+abstract class ResourceAbstract implements ResourceInterface
 {
     /**
      * @var Request
@@ -35,8 +36,6 @@ abstract class ResourceAbstract implements ResourceAbstractInterface
     protected $requestContent;
 
     /**
-     * todo : check that the logger actually works
-     *
      * IMPORTANT!   If you should use an instance of the RequestStack,
      *              return the Request by calling $request->getCurrentRequest()
      *
@@ -44,16 +43,15 @@ abstract class ResourceAbstract implements ResourceAbstractInterface
      * @param Request $request
      * @param ObjectManager $entityManager
      * @param Logger $logger
-     * @param null $requestContent
+     * @param \stdClass|null $requestContent
      */
     public function __construct(
         Request $request,
         ObjectManager $entityManager,
         Logger $logger,
-        $requestContent = null
+        \stdClass $requestContent = null
     )
     {
-        RequestHelper::initialize($request);
         $this->request = $request;
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -94,26 +92,35 @@ abstract class ResourceAbstract implements ResourceAbstractInterface
     }
 
     /**
-     * @return PropertyAccess|\Symfony\Component\PropertyAccess\PropertyAccessor
+     * @return PropertyAccessor
      */
-    public function getAccessor()
+    public function getAccessor(): PropertyAccessor
     {
         return $this->accessor;
     }
 
     /**
-     * @return Logger|\stdClass
+     * @return Logger
      */
-    public function getLogger()
+    public function getLogger(): Logger
     {
         return $this->logger;
     }
 
     /**
-     * @return mixed|\stdClass
+     * @return \stdClass
      */
-    public function getRequestContent()
+    public function getRequestContent(): \stdClass
     {
         return $this->requestContent;
+    }
+
+    /**
+     * @param string $msg
+     * @param string $context
+     */
+    public function log(string $msg, string $context = 'onew'): void
+    {
+        $this->logger->error($msg, [$context]);
     }
 }
