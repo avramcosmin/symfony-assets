@@ -10,7 +10,7 @@ trait StringTrait
      * Shorten a string to the desired length.
      *
      * @param $str
-     * @param int $length
+     * @param int|\number $length
      * @return string
      * @throws \Throwable
      */
@@ -56,16 +56,11 @@ trait StringTrait
     }
 
     /**
-     * @param $str
+     * @param string $str
      * @return string
      */
-    public static function parsedownExtra($str): string
+    public static function parsedownExtra(string $str = ''): string
     {
-
-        if (!is_string($str) && !is_numeric($str)) {
-            return '';
-        }
-
         $parsedownExtra = new \ParsedownExtra();
 
         return $parsedownExtra->text($str);
@@ -113,16 +108,30 @@ trait StringTrait
     }
 
     /**
-     * @param $str
+     * @param string|array|\stdClass $str
      * @param bool $jsonEncode
      * @return string
+     * @throws \Exception
      */
-    public static function base64url_encode($str, $jsonEncode = false): string
+    public static function base64url_encode($str, bool $jsonEncode = false): string
     {
+        if (!is_string($str) && !is_array($str) && !$str instanceof \stdClass) {
+            throw new \Exception('`str` should be a string, array or at most an instance of \stdClass().');
+        }
+
         if ($jsonEncode === true) {
             $str = json_encode($str);
+
+            if (!$str) {
+                throw new \Exception('`base64url_encode()` failed to `json_encode()`.');
+            }
         }
+
         $str = base64_encode($str);
+
+        if (!$str) {
+            throw new \Exception('`base64url_encode` failed to `base64_encode()`.');
+        }
 
         return strtr($str, '+/=', '-_,');
     }
@@ -130,14 +139,24 @@ trait StringTrait
     /**
      * @param string|bool $str
      * @param bool $jsonDecode
-     * @return bool|mixed|string
+     * @return mixed
+     * @throws \Exception
      */
-    public static function base64url_decode(string $str, $jsonDecode = false)
+    public static function base64url_decode(string $str, bool $jsonDecode = false)
     {
         $str = strtr($str, '-_,', '+/=');
         $str = base64_decode($str);
-        if ($str && $jsonDecode === true) {
-            return json_decode($str, true);
+
+        if (!$str) {
+            throw new \Exception('`base64url_decode` failed to `base64_decode()`.');
+        }
+
+        if ($jsonDecode === true) {
+            $str = json_decode($str, true);
+
+            if (!$str) {
+                throw new \Exception('`base64url_decode()` failed to `json_encode()`.');
+            }
         }
 
         return $str;
@@ -145,37 +164,37 @@ trait StringTrait
 
     /**
      * @param $val
-     * @return bool|mixed
+     * @return float|null
      */
-    public static function isFloat($val)
+    public static function isFloat($val):? float
     {
         // we do this because filter_var(true, FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_THOUSAND) returns 1
         if ($val === true) {
-            return false;
+            return null;
         }
 
-        return filter_var($val, FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_THOUSAND);
+        return filter_var($val, FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_THOUSAND) ?: null;
     }
 
     /**
      * @param $val
      * @return bool|mixed
      */
-    public static function isInt($val)
+    public static function isInt($val):? int
     {
         // we do this because filter_var(true, FILTER_VALIDATE_INT) returns 1
         if ($val === true) {
-            return false;
+            return null;
         }
 
-        return filter_var($val, FILTER_VALIDATE_INT);
+        return filter_var($val, FILTER_VALIDATE_INT) ?: null;
     }
 
     /**
      * @param $val
-     * @return bool|\DateTime
+     * @return null|\DateTime
      */
-    public static function isDateTime($val)
+    public static function isDateTime($val):? \DateTime
     {
         if ($val instanceof \DateTime) {
             return $val;
@@ -184,18 +203,8 @@ trait StringTrait
         try {
             return new \DateTime($val, new \DateTimeZone('UTC'));
         } catch (\Throwable $e) {
-            return false;
+            return null;
         }
-    }
-
-    /**
-     * @param string $str
-     * @param string $separator
-     * @return string
-     */
-    public static function keepLatin(string $str, string $separator = '_'): string
-    {
-        return preg_replace('/[^a-zA-Z0-9]/', $separator, $str);
     }
 
     /**

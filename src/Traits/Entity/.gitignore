@@ -3,6 +3,4 @@
 !.gitignore
 !ControlFieldTrait.php
 !EntityQueryBuilderTrait.php
-!EntityRepositoryTrait.php
-!EntityTrait.php
 !NameTrait.php

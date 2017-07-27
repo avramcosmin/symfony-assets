@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 trait ControllerTrait
 {
-
     /**
      * @param ResourceAbstract $entityResource
      * @param string $method
@@ -141,8 +140,7 @@ trait ControllerTrait
             ),
             $viewHandler,
             $groups,
-            $statusCode,
-            $entityResource->getRequest()
+            $statusCode
         );
     }
 
@@ -178,8 +176,7 @@ trait ControllerTrait
             ),
             $viewHandler,
             $groups,
-            $statusCode,
-            $entityResource->getRequest()
+            $statusCode
         );
     }
 

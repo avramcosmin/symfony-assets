@@ -32,6 +32,9 @@ Just add the following lines inside `app/config/services.yml`:
             class: Mindlahus\SymfonyAssets\EventListener\ExceptionListener
             tags:
                 - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+    a0_user_provider:
+        class: Mindlahus\SymfonyAssets\Security\A0UserProvider
+        arguments: ["@jwt_auth.auth0_service"]
 ```
 
 ## Integrating `gedmo/doctrine-extensions`
@@ -69,4 +72,18 @@ To connect the listener to your app, just `copy/paste` the following snippet.
         tags:
             # loggable hooks user username if one is in security context
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+```
+
+## Monolog configuration
+
+```yaml
+monolog:
+    channels: [onew]
+    handlers:
+        onew:
+            # log all messages (since debug is the lowest level)
+            level:    debug
+            type:     stream
+            path:     '%kernel.logs_dir%/onew.log'
+            channels: [onew]
 ```

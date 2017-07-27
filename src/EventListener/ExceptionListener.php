@@ -6,6 +6,7 @@ use Mindlahus\SymfonyAssets\Exception\ValidationFailedException;
 use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
 use Mindlahus\SymfonyAssets\Helper\ThrowableHelper;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
@@ -16,25 +17,49 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
  */
 class ExceptionListener
 {
+    /**
+     * Returns \stdClass()
+     * [
+     *  status      HTTP status code
+     *  code        Exception code
+     *  type        throwable|validation_errors|not_found
+     *  content     [message (string), errors (array)]
+     *  idx         random string
+     * ]
+     *
+     * The client can use also the bad_request type
+     *
+     * @param GetResponseForExceptionEvent $event
+     */
     public function onKernelException(GetResponseForExceptionEvent $event): void
     {
         $exception = $event->getException();
         $statusCode = $this->getStatusCode($exception);
         $message = $exception->getMessage();
-        if ($exception instanceof ValidationFailedException) {
-            $message = json_decode($message);
-        }
-
-        $responseData = [
+        $data = [
             'status' => $statusCode,
             'code' => $exception->getCode() ?? ThrowableHelper::NO_ERROR_CODE,
-            'data' => [
-                $message
+            'type' => 'throwable',
+            'idx' => bin2hex(random_bytes(5)),
+            'content' => [
+                'message' => $message,
+                'errors' => []
             ]
         ];
 
+        if ($exception instanceof ValidationFailedException) {
+            $data['content'] = json_decode($message);
+            $data['type'] = 'validation_errors';
+        }
+
+        if ($statusCode === Response::HTTP_NOT_FOUND) {
+            $data['type'] = 'not_found';
+        }
+
         $event->setResponse(new JsonResponse(
-            $responseData,
+            [
+                'data' => $data
+            ],
             $statusCode,
             ResponseHelper::CORS_HEADERS
         ));

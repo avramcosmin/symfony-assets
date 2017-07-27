@@ -11,4 +11,16 @@ trait TestTrait
     {
         \Mockery::close();
     }
+
+    /**
+     * @param array $assertions
+     */
+    private function batchAssertEquals(
+        array $assertions
+    ): void
+    {
+        foreach ($assertions as $arr) {
+            $this->assertEquals($arr[0], $arr[1]);
+        }
+    }
 }

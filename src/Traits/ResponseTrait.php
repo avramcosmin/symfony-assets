@@ -5,27 +5,25 @@ namespace Mindlahus\SymfonyAssets\Traits;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandler;
 use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 trait ResponseTrait
 {
     /**
-     * For PUT/POST requests that upload files
-     * make sure you pass the Request $request argument
-     * but only after you call RequestHelper::initialize()
-     *
      * Returns \stdClass()
-     * {
-     *      code,
-     *      data (array, \stdClass)
-     * }
+     * [
+     *  status      HTTP status code
+     *  code        null
+     *  type        null
+     *  content     []|\stdClass()
+     *  idx         random string
+     * ]
      *
      * @param $data
      * @param ViewHandler $viewHandler
      * @param array $groups
      * @param int $statusCode
-     * @param Request $request Pass this in case of a PUT request
+     * @param string|null $location
      * @return Response
      */
     public static function Serialize(
@@ -33,20 +31,31 @@ trait ResponseTrait
         ViewHandler $viewHandler,
         array $groups = [],
         int $statusCode = 200,
-        Request $request = null
+        string $location = null
     ): Response
     {
         $view = new View();
         $view->setStatusCode($statusCode);
         if ($view->getStatusCode() !== Response::HTTP_NO_CONTENT) {
-            $view->setData(['data' => $data]);
+            $view->setData([
+                'data' => [
+                    'status' => $view->getStatusCode(),
+                    'code' => null,
+                    'type' => null,
+                    'idx' => bin2hex(random_bytes(5)),
+                    'content' => $data
+                ]
+            ]);
             if (!empty($groups)) {
                 $view->getContext()->setGroups($groups);
             }
         }
+        if ($location) {
+            $view->setLocation($location);
+        }
         $view->setHeaders(ResponseHelper::CORS_HEADERS);
         $view->setFormat('json');
 
-        return $viewHandler->handle($view, $request);
+        return $viewHandler->handle($view);
     }
 }

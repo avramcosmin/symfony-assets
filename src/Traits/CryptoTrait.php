@@ -16,7 +16,7 @@ trait CryptoTrait
     public static function encryptAES(
         string $str,
         string $key,
-        $base64Encode = false
+        bool $base64Encode = false
     ): string
     {
         $cipher = new AES();
@@ -32,16 +32,16 @@ trait CryptoTrait
     }
 
     /**
-     * @param string $str
+     * @param string|null $str
      * @param string $key
      * @param bool $base64Decode
-     * @return string
+     * @return string|null
      */
     public static function decryptAES(
         string $str,
         string $key,
-        $base64Decode = false
-    ): string
+        bool $base64Decode = false
+    ):? string
     {
         $cipher = new AES();
         $cipher->setKey($key);
@@ -50,7 +50,7 @@ trait CryptoTrait
             $str = StringHelper::base64url_decode($str);
         }
 
-        return $cipher->decrypt($str);
+        return $str ? $cipher->decrypt($str) : null;
     }
 
     /**
@@ -67,13 +67,13 @@ trait CryptoTrait
     {
         $cipher = new AES();
         $cipher->setKey($key);
-        $exp = new \DateTime("+${expires} seconds");
+        $time = time();
 
         $str = StringHelper::base64url_encode(
-            array_merge($payload, [
-                'exp' => $exp->getTimestamp(),
-                'iat' => time()
-            ]),
+            array_merge([
+                'exp' => $time + $expires,
+                'iat' => $time
+            ], $payload),
             true
         );
 
