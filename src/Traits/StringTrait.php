@@ -173,7 +173,11 @@ trait StringTrait
             return null;
         }
 
-        return filter_var($val, FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_THOUSAND) ?: null;
+        return filter_var(
+            $val,
+            FILTER_VALIDATE_FLOAT,
+            FILTER_FLAG_ALLOW_THOUSAND | FILTER_NULL_ON_FAILURE
+        );
     }
 
     /**
@@ -187,7 +191,7 @@ trait StringTrait
             return null;
         }
 
-        return filter_var($val, FILTER_VALIDATE_INT) ?: null;
+        return filter_var($val, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
     }
 
     /**
