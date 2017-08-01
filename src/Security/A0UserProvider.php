@@ -4,16 +4,19 @@ namespace Mindlahus\SymfonyAssets\Security;
 
 use Auth0\JWTAuthBundle\Security\Auth0Service;
 use Auth0\JWTAuthBundle\Security\Core\JWTUserProviderInterface;
+use Auth0\SDK\API\Management;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class A0UserProvider implements JWTUserProviderInterface
 {
     protected $auth0Service;
+    protected $domain;
 
-    public function __construct(Auth0Service $auth0Service)
+    public function __construct(Auth0Service $auth0Service, $domain)
     {
         $this->auth0Service = $auth0Service;
+        $this->domain = $domain;
     }
 
     /**
@@ -22,7 +25,9 @@ class A0UserProvider implements JWTUserProviderInterface
      */
     public function loadUserByJWT($jwt): A0User
     {
-        $data = $this->auth0Service->getUserProfileByA0UID($jwt->token, $jwt->sub);
+        $auth0Api = new Management($jwt->token, $this->domain);
+        $data = $auth0Api->users->get($jwt->sub);
+        //$data = $this->auth0Service->getUserProfileByA0UID($jwt->token, $jwt->sub);
 
         return new A0User($data, ['ROLE_VIEW']);
     }

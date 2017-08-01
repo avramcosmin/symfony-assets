@@ -19,22 +19,19 @@ composer require nelmio/cors-bundle
 Just add the following lines inside `app/config/services.yml`:
  
 ```yaml
-    mindlahus.v1.download_service:
+    mindlahus.v3.download_service:
         class: Mindlahus\SymfonyAssets\Service\DownloadService
         arguments: ["@service_container"]
-    mindlahus.v1.upload_service:
-        class: Mindlahus\SymfonyAssets\Service\UploadService
-        arguments: ["@service_container"]
-    mindlahus.v1.database_export_service:
+    mindlahus.v3.database_export_service:
         class: Mindlahus\SymfonyAssets\Service\DatabaseExportService
         arguments: ["@service_container"]
-    mindlahus.v1.exception_listener:
+    mindlahus.v3.exception_listener:
             class: Mindlahus\SymfonyAssets\EventListener\ExceptionListener
             tags:
                 - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
     a0_user_provider:
         class: Mindlahus\SymfonyAssets\Security\A0UserProvider
-        arguments: ["@jwt_auth.auth0_service"]
+        arguments: ["@jwt_auth.auth0_service", '%jwt_auth.domain%']
 ```
 
 ## Integrating `gedmo/doctrine-extensions`
@@ -63,12 +60,11 @@ This will help you connect your local `User` to the `user profile` made availabl
 To connect the listener to your app, just `copy/paste` the following snippet.
 
 ```yaml
-    # KernelRequest listener
-    extension.listener:
+    mindlahus.v3.doctrine_extension_listener:
         class: Mindlahus\SymfonyAssets\Listener\DoctrineExtensionListener
         calls:
             - [ setContainer, [ "@service_container" ] ]
-            - [ setUserRepository, [ "UserV1Bundle:User" ] ]
+            - [ setUserRepository, [ "AppBundle:User" ] ]
         tags:
             # loggable hooks user username if one is in security context
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
