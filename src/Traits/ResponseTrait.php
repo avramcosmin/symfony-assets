@@ -25,6 +25,7 @@ trait ResponseTrait
      * @param int $statusCode
      * @param string|null $location
      * @return Response
+     * @throws \Throwable
      */
     public static function Serialize(
         $data,

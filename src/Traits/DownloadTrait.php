@@ -23,6 +23,7 @@ trait DownloadTrait
      * @param bool $inlineDisposition
      * @param bool $knownSize
      * @return BinaryFileResponse
+     * @throws \Throwable
      */
     public static function StreamOrDownloadFileFromPath(
         string $filePath,
@@ -67,6 +68,7 @@ trait DownloadTrait
      * @param string $fileName
      * @param bool $inlineDisposition
      * @return StreamedResponse
+     * @throws \Throwable
      */
     public static function StreamOrDownloadOctetStream(
         string $octetStream,
@@ -113,6 +115,7 @@ trait DownloadTrait
      * @param StreamedResponse|BinaryFileResponse|Response $response
      * @param string $fileName
      * @return Response
+     * @throws \Throwable
      */
     public static function ForceDownload(Response $response, string $fileName): Response
     {

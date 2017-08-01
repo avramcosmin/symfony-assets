@@ -37,6 +37,7 @@ trait CryptoTrait
      * @param string $key
      * @param bool $base64Decode
      * @return string|null
+     * @throws \Throwable
      */
     public static function decryptAES(
         string $str,

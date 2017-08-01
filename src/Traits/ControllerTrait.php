@@ -25,6 +25,7 @@ trait ControllerTrait
      * @param array $groups
      * @param int|null $statusCode
      * @return Response
+     * @throws \Throwable
      */
     public static function CreateAndSerialize(
         ResourceAbstract $entityResource,
@@ -61,6 +62,7 @@ trait ControllerTrait
      * @param array $groups
      * @param int|null $statusCode
      * @return Response
+     * @throws \Throwable
      */
     public static function ChangeAndSerialize(
         ResourceAbstract $entityResource,
@@ -93,6 +95,7 @@ trait ControllerTrait
      * @param ViewHandler $viewHandler
      * @param array $groups
      * @return Response
+     * @throws \Throwable
      */
     public static function RemoveAndSerialize(
         $entity,

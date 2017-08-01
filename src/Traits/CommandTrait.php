@@ -126,6 +126,7 @@ trait CommandTrait
 
     /**
      * @param array $commands
+     * @throws \Throwable
      */
     private function exec_console_commands(array $commands): void
     {
@@ -140,6 +141,7 @@ trait CommandTrait
     /**
      * @param $entity
      * @return bool
+     * @throws \Throwable
      */
     private function validate($entity): bool
     {

@@ -14,6 +14,7 @@ trait CsvTrait
      * @param array $cols
      * @param string|null $filePath Full path including the file name
      * @return string
+     * @throws \Throwable
      */
     public static function entitiesToCSV(
         array $entities,
@@ -38,6 +39,7 @@ trait CsvTrait
      * @param array $cols
      * @param PropertyAccessor $accessor
      * @return array
+     * @throws \Throwable
      */
     public static function _mapCSV($entity, array $cols, PropertyAccessor $accessor): array
     {

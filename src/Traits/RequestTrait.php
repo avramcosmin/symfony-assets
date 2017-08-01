@@ -9,6 +9,7 @@ trait RequestTrait
     /**
      * @param Request $request
      * @return \stdClass
+     * @throws \Throwable
      */
     public static function getContent(Request $request): \stdClass
     {
