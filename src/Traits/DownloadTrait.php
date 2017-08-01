@@ -2,10 +2,6 @@
 
 namespace Mindlahus\SymfonyAssets\Traits;
 
-use FOS\RestBundle\View\ViewHandler;
-use Mindlahus\SymfonyAssets\Helper\CryptoHelper;
-use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Stream;
 use Symfony\Component\HttpFoundation\Response;
@@ -157,43 +153,8 @@ trait DownloadTrait
     }
 
     /**
-     * $payload = [
-     *  iat                 optional
-     *  exp                 optional
-     * ]
-     *
-     * @param array $payload
-     * @param string $encryptionKey
-     * @param ContainerInterface $container
-     * @return Response
-     */
-    public static function jwtGetDownloadToken(
-        array $payload,
-        string $encryptionKey,
-        ContainerInterface $container
-    ): Response
-    {
-        /**
-         * @var ViewHandler $viewHandler
-         */
-        $viewHandler = $container->get('fos_rest.view_handler');
-        $decodedJwtToken = $container->get('auth0.v3.jwt_auth_bundle')->getDecodedJwtToken();
-        $payload['iat'] = $decodedJwtToken->iat;
-        $payload['exp'] = $decodedJwtToken->exp;
-        return ResponseHelper::Serialize(
-            [
-                'downloadToken' => CryptoHelper::encryptArrayToBase64(
-                    $payload,
-                    $encryptionKey
-                )
-            ],
-            $viewHandler
-        );
-    }
-
-    /**
      * @param int $time
-     * @throws \Exception
+     * @throws \Throwable
      */
     public static function jwtIsValidSession(int $time): void
     {

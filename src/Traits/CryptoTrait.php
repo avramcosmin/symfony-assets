@@ -12,6 +12,7 @@ trait CryptoTrait
      * @param string $key
      * @param bool $base64Encode
      * @return string
+     * @throws \Throwable
      */
     public static function encryptAES(
         string $str,
@@ -58,6 +59,7 @@ trait CryptoTrait
      * @param string $key
      * @param int $expires
      * @return string
+     * @throws \Throwable
      */
     public static function encryptArrayToBase64(
         array $payload,
@@ -84,6 +86,7 @@ trait CryptoTrait
      * @param string $str
      * @param string $key
      * @return array Encrypted with $this->encrypt()
+     * @throws \Throwable
      */
     public static function decryptBase64ToArray(string $str, string $key): array
     {

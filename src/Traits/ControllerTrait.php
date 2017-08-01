@@ -5,6 +5,7 @@ namespace Mindlahus\SymfonyAssets\Traits;
 use Doctrine\Common\Persistence\ObjectManager;
 use FOS\RestBundle\View\ViewHandler;
 use Mindlahus\SymfonyAssets\AbstractInterface\ResourceAbstract;
+use Mindlahus\SymfonyAssets\Helper\CryptoHelper;
 use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
 use Mindlahus\SymfonyAssets\Traits\Entity\EntityTrait;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -118,6 +119,7 @@ trait ControllerTrait
      * @param bool $inlineDisposition
      * @param bool $knownSize
      * @return BinaryFileResponse
+     * @throws \Throwable
      */
     public static function jwtStreamOrDownloadFileFromPath(
         int $exp,
@@ -146,6 +148,7 @@ trait ControllerTrait
      * @param string $fileName
      * @param bool $inlineDisposition
      * @return StreamedResponse
+     * @throws \Throwable
      */
     public static function jwtStreamOrDownloadOctetStream(
         int $exp,
@@ -168,6 +171,7 @@ trait ControllerTrait
      * @param Response $response
      * @param string $fileName
      * @return Response
+     * @throws \Throwable
      */
     public static function jwtForceDownload(
         int $exp,
@@ -178,5 +182,34 @@ trait ControllerTrait
         DownloadTrait::jwtIsValidSession($exp);
 
         return DownloadTrait::ForceDownload($response, $fileName);
+    }
+
+    /**
+     * $payload = [
+     *  iat                 optional
+     *  exp                 optional
+     * ]
+     *
+     * @param array $payload
+     * @param string $encryptionKey
+     * @param ViewHandler $viewHandler
+     * @return Response
+     * @throws \Throwable
+     */
+    public static function jwtGetEncryptedPayload(
+        array $payload,
+        string $encryptionKey,
+        ViewHandler $viewHandler
+    ): Response
+    {
+        return ResponseHelper::Serialize(
+            [
+                'encryptedPayload' => CryptoHelper::encryptArrayToBase64(
+                    $payload,
+                    $encryptionKey
+                )
+            ],
+            $viewHandler
+        );
     }
 }
