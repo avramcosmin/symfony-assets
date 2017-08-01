@@ -5,6 +5,7 @@ namespace Mindlahus\SymfonyAssets\Traits;
 use FOS\RestBundle\View\ViewHandler;
 use Mindlahus\SymfonyAssets\Helper\CryptoHelper;
 use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Stream;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait DownloadTrait
 {
-
     use FileTrait;
 
     use MimeTypeExtensionTrait;
@@ -79,7 +79,7 @@ trait DownloadTrait
     ): StreamedResponse
     {
         $response = new StreamedResponse(function () use ($octetStream) {
-            $handle = fopen('php://output', 'br+');
+            $handle = fopen('php://output', 'rb+');
 
             fwrite($handle, $octetStream);
 
@@ -157,107 +157,38 @@ trait DownloadTrait
     }
 
     /**
-     * $tokenContent = [
-     *  filePath            optional
-     *  fileName            optional
+     * $payload = [
      *  iat                 optional
      *  exp                 optional
      * ]
      *
-     * @param ViewHandler $viewHandler
+     * @param array $payload
      * @param string $encryptionKey
-     * @param array $tokenContent
+     * @param ContainerInterface $container
      * @return Response
-     * @throws \Throwable
      */
     public static function jwtGetDownloadToken(
-        array $tokenContent,
-        ViewHandler $viewHandler,
-        string $encryptionKey
+        array $payload,
+        string $encryptionKey,
+        ContainerInterface $container
     ): Response
     {
-        if (($tokenContent['filePath'] ?? null) && !file_exists($tokenContent['filePath'])) {
-            throw new \Exception('File does not exist. No resources returned by the provided file path.');
-        }
+        /**
+         * @var ViewHandler $viewHandler
+         */
+        $viewHandler = $container->get('fos_rest.view_handler');
+        $decodedJwtToken = $container->get('auth0.v3.jwt_auth_bundle')->getDecodedJwtToken();
+        $payload['iat'] = $decodedJwtToken->iat;
+        $payload['exp'] = $decodedJwtToken->exp;
         return ResponseHelper::Serialize(
             [
                 'downloadToken' => CryptoHelper::encryptArrayToBase64(
-                    $tokenContent,
+                    $payload,
                     $encryptionKey
                 )
             ],
             $viewHandler
         );
-    }
-
-    /**
-     * @param int $exp
-     * @param string $filePath
-     * @param string|null $fileName
-     * @param bool $deleteOnCompleted
-     * @param bool $inlineDisposition
-     * @param bool $knownSize
-     * @return BinaryFileResponse
-     */
-    public static function jwtStreamOrDownloadFileFromPath(
-        int $exp,
-        string $filePath,
-        string $fileName = null,
-        bool $deleteOnCompleted = true,
-        bool $inlineDisposition = true,
-        bool $knownSize = true
-    ): BinaryFileResponse
-    {
-        static::jwtIsValidSession($exp);
-
-        return static::StreamOrDownloadFileFromPath(
-            $filePath,
-            $fileName,
-            $deleteOnCompleted,
-            $inlineDisposition,
-            $knownSize
-
-        );
-    }
-
-    /**
-     * @param int $exp
-     * @param string $octetStream
-     * @param string $fileName
-     * @param bool $inlineDisposition
-     * @return StreamedResponse
-     */
-    public static function jwtStreamOrDownloadOctetStream(
-        int $exp,
-        string $octetStream,
-        string $fileName,
-        bool $inlineDisposition = true
-    ): StreamedResponse
-    {
-        static::jwtIsValidSession($exp);
-
-        return static::StreamOrDownloadOctetStream(
-            $octetStream,
-            $fileName,
-            $inlineDisposition
-        );
-    }
-
-    /**
-     * @param int $exp
-     * @param Response $response
-     * @param string $fileName
-     * @return Response
-     */
-    public static function jwtForceDownload(
-        int $exp,
-        Response $response,
-        string $fileName
-    ): Response
-    {
-        static::jwtIsValidSession($exp);
-
-        return static::ForceDownload($response, $fileName);
     }
 
     /**
@@ -267,7 +198,7 @@ trait DownloadTrait
     public static function jwtIsValidSession(int $time): void
     {
         if (time() > $time) {
-            throw new \Exception('Invalid download session!');
+            throw new \Exception('Invalid download session! Time expired.');
         }
     }
 }

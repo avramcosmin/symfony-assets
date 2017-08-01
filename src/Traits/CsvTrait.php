@@ -23,7 +23,7 @@ trait CsvTrait
     ): string
     {
         $accessor = PropertyAccess::createPropertyAccessor();
-        $handler = $filePath ? fopen($filePath, 'bw+') : fopen('php://output', 'br+');
+        $handler = $filePath ? fopen($filePath, 'wb+') : fopen('php://output', 'rb+');
         fputcsv($handler, $header);
         foreach ($entities as $entity) {
             fputcsv($handler, static::_mapCSV($entity, $cols, $accessor));

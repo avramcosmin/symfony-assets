@@ -25,7 +25,7 @@ services:
         tags:
             # loggable hooks user username if one is in security context
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-    a0_user_provider:
+    auth0.v3.jwt_auth_bundle:
         class: Mindlahus\SymfonyAssets\Security\A0UserProvider
         arguments: ["@jwt_auth.auth0_service", '%jwt_auth.domain%']
 

@@ -29,7 +29,7 @@ Just add the following lines inside `app/config/services.yml`:
             class: Mindlahus\SymfonyAssets\EventListener\ExceptionListener
             tags:
                 - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
-    a0_user_provider:
+    auth0.v3.jwt_auth_bundle:
         class: Mindlahus\SymfonyAssets\Security\A0UserProvider
         arguments: ["@jwt_auth.auth0_service", '%jwt_auth.domain%']
 ```

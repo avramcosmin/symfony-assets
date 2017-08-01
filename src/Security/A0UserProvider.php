@@ -12,6 +12,7 @@ class A0UserProvider implements JWTUserProviderInterface
 {
     protected $auth0Service;
     protected $domain;
+    protected $decodedJwtToken;
 
     public function __construct(Auth0Service $auth0Service, $domain)
     {
@@ -25,6 +26,7 @@ class A0UserProvider implements JWTUserProviderInterface
      */
     public function loadUserByJWT($jwt): A0User
     {
+        $this->decodedJwtToken = $jwt;
         $auth0Api = new Management($jwt->token, $this->domain);
         $data = $auth0Api->users->get($jwt->sub);
         //$data = $this->auth0Service->getUserProfileByA0UID($jwt->token, $jwt->sub);
@@ -75,5 +77,13 @@ class A0UserProvider implements JWTUserProviderInterface
     public function getAuth0Service(): Auth0Service
     {
         return $this->auth0Service;
+    }
+
+    /**
+     * @return \stdClass
+     */
+    public function getDecodedJwtToken(): \stdClass
+    {
+        return $this->decodedJwtToken;
     }
 }

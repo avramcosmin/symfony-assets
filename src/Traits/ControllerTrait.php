@@ -5,109 +5,15 @@ namespace Mindlahus\SymfonyAssets\Traits;
 use Doctrine\Common\Persistence\ObjectManager;
 use FOS\RestBundle\View\ViewHandler;
 use Mindlahus\SymfonyAssets\AbstractInterface\ResourceAbstract;
-use Mindlahus\SymfonyAssets\Exception\ValidationFailedException;
 use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
+use Mindlahus\SymfonyAssets\Traits\Entity\EntityTrait;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 trait ControllerTrait
 {
-    /**
-     * @param ResourceAbstract $entityResource
-     * @param string $method
-     * @param $entity
-     * @param ValidatorInterface $validator
-     * @param ObjectManager $em
-     * @return mixed
-     */
-    public static function EntityCreate(
-        ResourceAbstract $entityResource,
-        string $method,
-        $entity,
-        ValidatorInterface $validator,
-        ObjectManager $em
-    )
-    {
-        return static::EntityChangeOrCreate(
-            $entityResource,
-            $method,
-            $entity,
-            $validator,
-            $em,
-            true
-        );
-    }
-
-    /**
-     * @param ResourceAbstract $entityResource
-     * @param string $method
-     * @param $entity
-     * @param ValidatorInterface $validator
-     * @param ObjectManager $em
-     * @return mixed
-     */
-    public static function EntityChange(
-        ResourceAbstract $entityResource,
-        string $method,
-        $entity,
-        ValidatorInterface $validator,
-        ObjectManager $em
-    )
-    {
-        return static::EntityChangeOrCreate(
-            $entityResource,
-            $method,
-            $entity,
-            $validator,
-            $em
-        );
-    }
-
-    /**
-     * @param $entity
-     * @param ObjectManager $em
-     */
-    public static function EntityRemove(
-        $entity,
-        ObjectManager $em
-    ): void
-    {
-        $em->remove($entity);
-        $em->flush();
-    }
-
-    /**
-     * @param ResourceAbstract $entityResource
-     * @param string $method
-     * @param $entity
-     * @param ValidatorInterface $validator
-     * @param ObjectManager $em
-     * @param bool $persist
-     * @return mixed
-     */
-    private static function EntityChangeOrCreate(
-        ResourceAbstract $entityResource,
-        string $method,
-        $entity,
-        ValidatorInterface $validator,
-        ObjectManager $em,
-        bool $persist = false
-    )
-    {
-        $entityResource->{$method}($entity);
-        $errors = $validator->validate($entity);
-        if (count($errors) > 0) {
-            throw new ValidationFailedException($errors);
-        }
-
-        if ($persist === true) {
-            $em->persist($entity);
-        }
-        $em->flush();
-
-        return $entity;
-    }
-
     /**
      * @param ResourceAbstract $entityResource
      * @param string $method
@@ -131,7 +37,7 @@ trait ControllerTrait
     ): Response
     {
         return ResponseHelper::Serialize(
-            static::EntityCreate(
+            EntityTrait::EntityCreate(
                 $entityResource,
                 $method,
                 $entity,
@@ -167,7 +73,7 @@ trait ControllerTrait
     ): Response
     {
         return ResponseHelper::Serialize(
-            static::EntityChange(
+            EntityTrait::EntityChange(
                 $entityResource,
                 $method,
                 $entity,
@@ -194,7 +100,7 @@ trait ControllerTrait
         array $groups = []
     ): Response
     {
-        static::EntityRemove($entity, $em);
+        EntityTrait::EntityRemove($entity, $em);
 
         return ResponseHelper::Serialize(
             [],
@@ -202,5 +108,75 @@ trait ControllerTrait
             $groups,
             Response::HTTP_NO_CONTENT
         );
+    }
+
+    /**
+     * @param int $exp
+     * @param string $filePath
+     * @param string|null $fileName
+     * @param bool $deleteOnCompleted
+     * @param bool $inlineDisposition
+     * @param bool $knownSize
+     * @return BinaryFileResponse
+     */
+    public static function jwtStreamOrDownloadFileFromPath(
+        int $exp,
+        string $filePath,
+        string $fileName = null,
+        bool $deleteOnCompleted = true,
+        bool $inlineDisposition = true,
+        bool $knownSize = true
+    ): BinaryFileResponse
+    {
+        DownloadTrait::jwtIsValidSession($exp);
+
+        return DownloadTrait::StreamOrDownloadFileFromPath(
+            $filePath,
+            $fileName,
+            $deleteOnCompleted,
+            $inlineDisposition,
+            $knownSize
+
+        );
+    }
+
+    /**
+     * @param int $exp
+     * @param string $octetStream
+     * @param string $fileName
+     * @param bool $inlineDisposition
+     * @return StreamedResponse
+     */
+    public static function jwtStreamOrDownloadOctetStream(
+        int $exp,
+        string $octetStream,
+        string $fileName,
+        bool $inlineDisposition = true
+    ): StreamedResponse
+    {
+        DownloadTrait::jwtIsValidSession($exp);
+
+        return DownloadTrait::StreamOrDownloadOctetStream(
+            $octetStream,
+            $fileName,
+            $inlineDisposition
+        );
+    }
+
+    /**
+     * @param int $exp
+     * @param Response $response
+     * @param string $fileName
+     * @return Response
+     */
+    public static function jwtForceDownload(
+        int $exp,
+        Response $response,
+        string $fileName
+    ): Response
+    {
+        DownloadTrait::jwtIsValidSession($exp);
+
+        return DownloadTrait::ForceDownload($response, $fileName);
     }
 }
