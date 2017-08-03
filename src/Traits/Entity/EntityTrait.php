@@ -5,6 +5,7 @@ namespace Mindlahus\SymfonyAssets\Traits\Entity;
 use Doctrine\Common\Persistence\ObjectManager;
 use Mindlahus\SymfonyAssets\AbstractInterface\ResourceAbstract;
 use Mindlahus\SymfonyAssets\Exception\ValidationFailedException;
+use Mindlahus\SymfonyAssets\Helper\StringHelper;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 trait EntityTrait
@@ -103,5 +104,53 @@ trait EntityTrait
         $em->flush();
 
         return $entity;
+    }
+
+    /**
+     * This helper method allows one to ignore the Time Zone reported by MySQL or the local Time Zone and,
+     * just compare to dates considering the actual numbers (but of course, ignoring the real Time Zone)
+     *
+     * @param \DateTime|null $dateTime1
+     * @param \DateTime|null $dateTime2
+     * @param string|null $format
+     * @param bool $strict
+     * @return bool|\DateInterval|string
+     */
+    public static function validDateDiffInterval(
+        \DateTime $dateTime1 = null,
+        \DateTime $dateTime2 = null,
+        string $format = null,
+        bool $strict = true
+    )
+    {
+        if (!$dateTime1 || !$dateTime2) {
+            return false;
+        }
+
+        if ($strict === true) {
+            $dateTime1 = new \DateTime($dateTime1->format('Ymd H:s:i'));
+            $dateTime2 = new \DateTime($dateTime2->format('Ymd H:s:i'));
+        }
+
+        $interval = $dateTime1->diff($dateTime2);
+
+        if ($format && $interval) {
+            $interval = $interval->format($format);
+        }
+
+        return $interval ?: false;
+    }
+
+    /**
+     * \DateTime::ISO8601 is not compatible with the ISO8601 itself
+     * For compatibility use \DateTime::ATOM or just c
+     *
+     * @param \DateTime $val
+     * @param string $format
+     * @return string
+     */
+    public static function getFormattedDateTime(\DateTime $val, string $format = \DateTime::ATOM): string
+    {
+        return StringHelper::dateFormat($val, $format);
     }
 }
