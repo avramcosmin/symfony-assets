@@ -33,13 +33,40 @@ trait ControllerTrait
         array $groups = []
     ): Response
     {
-        $entity = $em->getRepository($repository)->findOneBy([
-            'id' => $id
-        ]);
+        return static::FindOneByAndSerialize(
+            [
+                'id' => $id
+            ],
+            $repository,
+            $viewHandler,
+            $em,
+            $groups
+        );
+    }
+
+    /**
+     * @param array $findBy
+     * @param string $repository
+     * @param ViewHandlerInterface $viewHandler
+     * @param ObjectManager $em
+     * @param array $groups
+     * @return Response
+     * @throws \Throwable
+     */
+    public static function FindOneByAndSerialize(
+        array $findBy,
+        string $repository,
+        ViewHandlerInterface $viewHandler,
+        ObjectManager $em,
+        array $groups = []
+    ): Response
+    {
+        $entity = $em->getRepository($repository)->findOneBy($findBy);
 
         if (!$entity) {
             throw new NotFoundException();
         }
+
         return ResponseHelper::Serialize(
             $entity,
             $viewHandler,
