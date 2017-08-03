@@ -3,7 +3,7 @@
 namespace Mindlahus\SymfonyAssets\Traits;
 
 use FOS\RestBundle\View\View;
-use FOS\RestBundle\View\ViewHandler;
+use FOS\RestBundle\View\ViewHandlerInterface;
 use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,7 +20,7 @@ trait ResponseTrait
      * ]
      *
      * @param $data
-     * @param ViewHandler $viewHandler
+     * @param ViewHandlerInterface $viewHandler
      * @param array $groups
      * @param int $statusCode
      * @param string|null $location
@@ -29,7 +29,7 @@ trait ResponseTrait
      */
     public static function Serialize(
         $data,
-        ViewHandler $viewHandler,
+        ViewHandlerInterface $viewHandler,
         array $groups = [],
         int $statusCode = 200,
         string $location = null

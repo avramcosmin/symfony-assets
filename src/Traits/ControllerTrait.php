@@ -3,8 +3,9 @@
 namespace Mindlahus\SymfonyAssets\Traits;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use FOS\RestBundle\View\ViewHandler;
+use FOS\RestBundle\View\ViewHandlerInterface;
 use Mindlahus\SymfonyAssets\AbstractInterface\ResourceAbstract;
+use Mindlahus\SymfonyAssets\Exception\NotFoundException;
 use Mindlahus\SymfonyAssets\Helper\CryptoHelper;
 use Mindlahus\SymfonyAssets\Helper\ResponseHelper;
 use Mindlahus\SymfonyAssets\Traits\Entity\EntityTrait;
@@ -16,12 +17,43 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 trait ControllerTrait
 {
     /**
+     * @param int $id
+     * @param string $repository
+     * @param ViewHandlerInterface $viewHandler
+     * @param ObjectManager $em
+     * @param array $groups
+     * @return Response
+     * @throws \Throwable
+     */
+    public static function FindOneByIdAndSerialize(
+        int $id,
+        string $repository,
+        ViewHandlerInterface $viewHandler,
+        ObjectManager $em,
+        array $groups = []
+    ): Response
+    {
+        $entity = $em->getRepository($repository)->findOneBy([
+            'id' => $id
+        ]);
+
+        if (!$entity) {
+            throw new NotFoundException();
+        }
+        return ResponseHelper::Serialize(
+            $entity,
+            $viewHandler,
+            $groups
+        );
+    }
+
+    /**
      * @param ResourceAbstract $entityResource
      * @param string $method
      * @param $entity
      * @param ValidatorInterface $validator
      * @param ObjectManager $em
-     * @param ViewHandler $viewHandler
+     * @param ViewHandlerInterface $viewHandler
      * @param array $groups
      * @param int|null $statusCode
      * @return Response
@@ -33,7 +65,7 @@ trait ControllerTrait
         $entity,
         ValidatorInterface $validator,
         ObjectManager $em,
-        ViewHandler $viewHandler,
+        ViewHandlerInterface $viewHandler,
         array $groups = [],
         int $statusCode = Response::HTTP_CREATED
     ): Response
@@ -58,7 +90,7 @@ trait ControllerTrait
      * @param $entity
      * @param ValidatorInterface $validator
      * @param ObjectManager $em
-     * @param ViewHandler $viewHandler
+     * @param ViewHandlerInterface $viewHandler
      * @param array $groups
      * @param int|null $statusCode
      * @return Response
@@ -70,7 +102,7 @@ trait ControllerTrait
         $entity,
         ValidatorInterface $validator,
         ObjectManager $em,
-        ViewHandler $viewHandler,
+        ViewHandlerInterface $viewHandler,
         array $groups = [],
         int $statusCode = null
     ): Response
@@ -92,7 +124,7 @@ trait ControllerTrait
     /**
      * @param $entity
      * @param ObjectManager $em
-     * @param ViewHandler $viewHandler
+     * @param ViewHandlerInterface $viewHandler
      * @param array $groups
      * @return Response
      * @throws \Throwable
@@ -100,7 +132,7 @@ trait ControllerTrait
     public static function RemoveAndSerialize(
         $entity,
         ObjectManager $em,
-        ViewHandler $viewHandler,
+        ViewHandlerInterface $viewHandler,
         array $groups = []
     ): Response
     {
@@ -195,14 +227,14 @@ trait ControllerTrait
      *
      * @param array $payload
      * @param string $encryptionKey
-     * @param ViewHandler $viewHandler
+     * @param ViewHandlerInterface $viewHandler
      * @return Response
      * @throws \Throwable
      */
     public static function jwtGetEncryptedPayload(
         array $payload,
         string $encryptionKey,
-        ViewHandler $viewHandler
+        ViewHandlerInterface $viewHandler
     ): Response
     {
         return ResponseHelper::Serialize(
