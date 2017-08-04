@@ -1,5 +1,6 @@
 /*
 !.gitignore
+!ClassMetadataHelper.php
 !ControllerHelper.php
 !CryptoHelper.php
 !DatabaseExportHelper.php
@@ -10,5 +11,6 @@
 !GlobalHelper.php
 !RequestHelper.php
 !ResponseHelper.php
+!SecurityHelper.php
 !StringHelper.php
 !ThrowableHelper.php

@@ -1,6 +1,7 @@
 /*
 !Entity
 !.gitignore
+!ClassMetadataTrait.php
 !CommandTrait.php
 !ControllerTrait.php
 !CryptoTrait.php
