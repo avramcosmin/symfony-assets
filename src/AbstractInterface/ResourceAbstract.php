@@ -44,6 +44,7 @@ abstract class ResourceAbstract implements ResourceInterface
      * @param ObjectManager $entityManager
      * @param Logger $logger
      * @param \stdClass|null $requestContent
+     * @throws \Throwable
      */
     public function __construct(
         Request $request,
