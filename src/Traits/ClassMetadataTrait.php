@@ -86,8 +86,9 @@ trait ClassMetadataTrait
             $idx_raw = $prefix . $fieldName;
             $idx = static::hash($idx_raw);
             $fieldMap = $classMap->fieldMappings[$fieldName];
+            $fieldMap['orderBy'] = $joinedAs . '.' . $fieldName;
             if (!$classMetadata['orderBy'] && $fieldMap['id'] === true) {
-                $classMetadata['orderBy'] = $joinedAs . '.' . $fieldName;
+                $classMetadata['orderBy'] = $fieldMap['orderBy'];
             }
             $fieldMap['entityNamespace'] = $class;
             $fieldMap['entityName'] = $name;
