@@ -26,7 +26,11 @@ trait EntityQueryBuilderTrait
         string $joiningStrategy = EntityQueryBuilderHelper::JOIN_STRATEGY_LEFT
     ): string
     {
-        return implode($joiningStrategy, $entitiesAndTheirAliases);
+        if (!empty($entitiesAndTheirAliases)) {
+            return $joiningStrategy . implode($joiningStrategy, $entitiesAndTheirAliases);
+        }
+
+        return '';
     }
 
     /**
@@ -99,11 +103,7 @@ trait EntityQueryBuilderTrait
         foreach ($selectedIdxs as $selectedIdx) {
             $selectedIdx = $classMetadata['cols'][$selectedIdx];
             $selects[] = $selectedIdx['joinedAs'] . '.' . $selectedIdx['fieldName'];
-            if (
-                !isset($selectedIdx['joinedAs'])
-                &&
-                $join = $classMetadata['associations'][$selectedIdx['joinedAs']] ?? null
-            ) {
+            if ($join = $classMetadata['associations'][$selectedIdx['joinedAs']] ?? null) {
                 $joins[] = implode(' ', $join);
             }
         }

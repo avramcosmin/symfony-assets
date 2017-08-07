@@ -11,6 +11,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 trait ClassMetadataTrait
 {
+    public static $glue = '_';
+
     /**
      * @param array $classMetadata
      * @param string $class
@@ -20,6 +22,7 @@ trait ClassMetadataTrait
      * @param string|null $alias
      * @param int $depth
      * @param array $exclusions
+     * @throws \Throwable
      */
     public static function getClassMetadata(
         array &$classMetadata,
@@ -64,11 +67,10 @@ trait ClassMetadataTrait
             $classMetadata['path'] = [];
         }
         $classMetadata['path'][] = $alias;
-        $glue = '_';
-        $path = implode($glue, $classMetadata['path']);
-        $prefix = $path . $glue;
+        $path = implode(static::$glue, $classMetadata['path']);
+        $prefix = $path . static::$glue;
         $classMetadata['path_history'][] = $path;
-        $joinedAs = $glue . CryptoHelper::crc32Hash($path);
+        $joinedAs = static::hash($path);
         if (!isset($classMetadata['joinedAs'])) {
             $classMetadata['joinedAs'] = $joinedAs;
         }
@@ -78,7 +80,7 @@ trait ClassMetadataTrait
                 continue;
             }
             $idx_raw = $prefix . $fieldName;
-            $idx = $glue . CryptoHelper::crc32Hash($idx_raw);
+            $idx = static::hash($idx_raw);
             $fieldMap = $classMap->fieldMappings[$fieldName];
             if (!$classMetadata['orderBy'] && $fieldMap['id'] === true) {
                 $classMetadata['orderBy'] = $joinedAs . '.' . $fieldName;
@@ -87,14 +89,14 @@ trait ClassMetadataTrait
             $fieldMap['entityName'] = $name;
             $fieldMap['entityAlias'] = $alias;
             $fieldMap['path'] = $path;
-            $fieldMap['glue'] = $glue;
+            $fieldMap['glue'] = static::$glue;
             $fieldMap['prefix'] = $prefix;
             $fieldMap['joinedAs'] = $joinedAs;
             $fieldMap['joinedAsRaw'] = $path;
             $fieldMap['idx'] = $idx;
             $fieldMap['idxRaw'] = $idx_raw;
             $fieldMap['title'] = StringHelper::camelCaseToUCWords(
-                ucwords(str_replace($glue, ' ', $idx_raw))
+                ucwords(str_replace(static::$glue, ' ', $idx_raw))
             );
             $fieldMap['depth'] = $classMetadata['depth'] - $depth;
             $classMetadata['cols'][$idx] = $fieldMap;
@@ -119,7 +121,7 @@ trait ClassMetadataTrait
                     continue;
                 }
                 $idx_raw = $prefix . $associationName;
-                $idx = $glue . CryptoHelper::crc32Hash($idx_raw);
+                $idx = static::hash($idx_raw);
                 $associationMapping = $classMap->associationMappings[$associationName];
                 $classMetadata['associations'][$idx] = [
                     'association' => $alias . '.' . $associationName,
@@ -138,5 +140,14 @@ trait ClassMetadataTrait
         }
 
         array_pop($classMetadata['path']);
+    }
+
+    /**
+     * @param string $str
+     * @return string
+     */
+    public static function hash(string $str): string
+    {
+        return static::$glue . CryptoHelper::crc32Hash($str);
     }
 }
