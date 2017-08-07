@@ -60,6 +60,25 @@ trait EntityQueryBuilderTrait
     }
 
     /**
+     * $classMetadata = [
+     *  initialized     (bool)
+     *  depth           (int)
+     *  namespace       (string)
+     *  name            (string)
+     *  alias           (string)
+     *  cols            (array)
+     *  orderBy         (string)
+     *  orderDir        (string)
+     *  associations    (array)
+     *  cols_tt         (array)
+     *  path_history    (array)
+     *  path            (array)
+     *  joinedAs        (string)
+     * ]
+     * $selectedIdx = [
+     *  $idx (string)
+     * ]
+     *
      * @param array $classMetadata
      * @param array $selectedIdxs
      * @param array $where
@@ -78,7 +97,7 @@ trait EntityQueryBuilderTrait
         $selects = [];
         $joins = [];
         foreach ($selectedIdxs as $selectedIdx) {
-            $selectedIdx = $classMetadata['cols'][$selectedIdx['idx']];
+            $selectedIdx = $classMetadata['cols'][$selectedIdx];
             $selects[] = $selectedIdx['joinedAs'] . '.' . $selectedIdx['fieldName'];
             if (
                 !isset($selectedIdx['joinedAs'])
