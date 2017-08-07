@@ -2,12 +2,16 @@
 
 namespace Mindlahus\SymfonyAssets\Traits;
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Mindlahus\SymfonyAssets\Helper\CryptoHelper;
+use Mindlahus\SymfonyAssets\Helper\EntityQueryBuilderHelper;
 use Mindlahus\SymfonyAssets\Helper\StringHelper;
+use ReflectionProperty;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 trait ClassMetadataTrait
 {
@@ -108,6 +112,7 @@ trait ClassMetadataTrait
         }
 
         $instance = $reflectionClass->newInstance();
+        $annotationReader = new AnnotationReader();
 
         if ($depth >= 0) {
             foreach ($classMap->getAssociationNames() as $associationName) {
@@ -124,7 +129,12 @@ trait ClassMetadataTrait
                 $idx = static::hash($idx_raw);
                 $associationMapping = $classMap->associationMappings[$associationName];
                 $classMetadata['associations'][$idx] = [
-                    'association' => $alias . '.' . $associationName,
+                    'joinStrategy' => static::getJoinStrategyByPropertyAnnotation(
+                        $class,
+                        $associationName,
+                        $annotationReader
+                    ),
+                    'association' => $joinedAs . '.' . $associationName,
                     'alias' => $idx
                 ];
                 static::getClassMetadata(
@@ -140,6 +150,33 @@ trait ClassMetadataTrait
         }
 
         array_pop($classMetadata['path']);
+    }
+
+    /**
+     * @param string $class
+     * @param string $associationName
+     * @param AnnotationReader $annotationReader
+     * @param string $matchingStrategy
+     * @return string
+     * @throws \Throwable
+     */
+    public static function getJoinStrategyByPropertyAnnotation(
+        string $class,
+        string $associationName,
+        AnnotationReader $annotationReader,
+        string $matchingStrategy = NotBlank::class
+    ): string
+    {
+        $propertyReflection = new ReflectionProperty($class, $associationName);
+        $propertyAnnotations = $annotationReader->getPropertyAnnotations($propertyReflection);
+        $joinStrategy = EntityQueryBuilderHelper::JOIN_STRATEGY_LEFT;
+        foreach ($propertyAnnotations as $propertyAnnotation) {
+            if (get_class($propertyAnnotation) === $matchingStrategy) {
+                $joinStrategy = EntityQueryBuilderHelper::JOIN_STRATEGY_INNER;
+            }
+        }
+
+        return $joinStrategy;
     }
 
     /**

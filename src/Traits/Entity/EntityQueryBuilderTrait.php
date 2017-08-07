@@ -2,6 +2,7 @@
 
 namespace Mindlahus\SymfonyAssets\Traits\Entity;
 
+use Mindlahus\SymfonyAssets\Helper\ClassMetadataHelper;
 use Mindlahus\SymfonyAssets\Helper\EntityQueryBuilderHelper;
 
 trait EntityQueryBuilderTrait
@@ -102,7 +103,8 @@ trait EntityQueryBuilderTrait
         $joins = [];
         foreach ($selectedIdxs as $selectedIdx) {
             $selectedIdx = $classMetadata['cols'][$selectedIdx];
-            $selects[] = $selectedIdx['joinedAs'] . '.' . $selectedIdx['fieldName'];
+            $selects[] = $selectedIdx['joinedAs'] . '.' . $selectedIdx['fieldName']
+                . ' AS ' . $selectedIdx['joinedAs'] . ClassMetadataHelper::$glue . $selectedIdx['fieldName'];
             if ($join = $classMetadata['associations'][$selectedIdx['joinedAs']] ?? null) {
                 $joins[] = implode(' ', $join);
             }
@@ -111,7 +113,7 @@ trait EntityQueryBuilderTrait
             $selects,
             $classMetadata['namespace'] . ' ' . $classMetadata['joinedAs']
         );
-        $dql .= static::join($joins);
+        $dql .= implode('', $joins);
         $dql .= static::where($where);
         $dql .= static::orderBy(
             $orderBy ?: $classMetadata['orderBy'],
