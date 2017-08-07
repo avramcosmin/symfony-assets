@@ -104,16 +104,16 @@ trait EntityQueryBuilderTrait
         foreach ($selectedIdxs as $selectedIdx) {
             $selectedIdx = $classMetadata['cols'][$selectedIdx];
             $selects[] = $selectedIdx['joinedAs'] . '.' . $selectedIdx['fieldName']
-                . ' AS ' . $selectedIdx['joinedAs'] . ClassMetadataHelper::$glue . $selectedIdx['fieldName'];
+                . ' AS ' . $selectedIdx['joinedAsRaw'] . ClassMetadataHelper::$glue . $selectedIdx['fieldName'];
             if ($join = $classMetadata['associations'][$selectedIdx['joinedAs']] ?? null) {
-                $joins[] = implode(' ', $join);
+                $joins[$selectedIdx['joinedAs']] = implode(' ', $join);
             }
         }
         $dql = static::select(
             $selects,
             $classMetadata['namespace'] . ' ' . $classMetadata['joinedAs']
         );
-        $dql .= implode('', $joins);
+        $dql .= implode('', array_values($joins));
         $dql .= static::where($where);
         $dql .= static::orderBy(
             $orderBy ?: $classMetadata['orderBy'],
