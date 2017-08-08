@@ -17,15 +17,50 @@ trait ClassMetadataTrait
 {
     public static $glue = '_';
 
+    private static $exclusions = [
+        'createdBy',
+        'createdAt',
+        'updatedBy',
+        'updatedAt',
+        'controlField',
+        'password',
+        'passwordConfirmation'
+    ];
+
+    private static $forcedInclusions = [];
+
+    /**
+     * @param array $exclusions
+     */
+    public static function setExclusions(array $exclusions): void
+    {
+        static::$exclusions = $exclusions;
+    }
+
+    /**
+     * @param array $exclusions
+     */
+    public static function addExclusions(array $exclusions): void
+    {
+        static::$exclusions = array_merge(static::$exclusions, $exclusions);
+    }
+
+    /**
+     * @param array $forcedInclusions
+     */
+    public static function setForcedInclusions(array $forcedInclusions): void
+    {
+        static::$forcedInclusions = $forcedInclusions;
+    }
+
     /**
      * @param array $classMetadata
      * @param string $class
      * @param ObjectManager $em
      * @param PropertyAccessor $accessor
-     * @param array $selected_idx
+     * @param array $selectedIdxs
      * @param string|null $alias
      * @param int $depth
-     * @param array $exclusions
      * @throws \Throwable
      */
     public static function getClassMetadata(
@@ -33,18 +68,9 @@ trait ClassMetadataTrait
         string $class,
         ObjectManager $em,
         PropertyAccessor $accessor,
-        array $selected_idx = [],
+        array $selectedIdxs = [],
         string $alias = null,
-        $depth = 3,
-        array $exclusions = [
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',
-            'controlField',
-            'password',
-            'passwordConfirmation'
-        ]
+        $depth = 3
     ): void
     {
         --$depth;
@@ -82,9 +108,14 @@ trait ClassMetadataTrait
         }
 
         foreach ($classMap->getFieldNames() as $fieldName) {
-            if (in_array($fieldName, $exclusions, false)) {
+            if (
+                in_array($fieldName, static::$exclusions, false)
+                &&
+                !in_array($prefix . $fieldName, static::$forcedInclusions, false)
+            ) {
                 continue;
             }
+
             $idx_raw = $prefix . $fieldName;
             $idx = static::hash($idx_raw);
             $fieldMap = $classMap->fieldMappings[$fieldName];
@@ -115,7 +146,7 @@ trait ClassMetadataTrait
             $classMetadata['cols_tt'][$idx] = [
                 'idx' => $idx,
                 'title' => $fieldMap['title'],
-                'visible' => !in_array($idx, $selected_idx, false)
+                'visible' => !in_array($idx, $selectedIdxs, false)
             ];
         }
 
@@ -130,12 +161,17 @@ trait ClassMetadataTrait
                 if (
                     $accessor->getValue($instance, $associationName) instanceof ArrayCollection
                     ||
-                    in_array($associationName, $exclusions, false)
-                    ||
                     in_array($associationName, $classMetadata['path'], false)
+                    ||
+                    (
+                        !in_array($prefix . $associationName, static::$forcedInclusions, false)
+                        &&
+                        in_array($associationName, static::$exclusions, false)
+                    )
                 ) {
                     continue;
                 }
+
                 // prefix = path + glue
                 $idx_raw = $prefix . $associationName;
                 $idx = static::hash($idx_raw);
@@ -157,7 +193,7 @@ trait ClassMetadataTrait
                     $associationMapping['targetEntity'],
                     $em,
                     $accessor,
-                    $selected_idx,
+                    $selectedIdxs,
                     $associationName,
                     $depth
                 );
