@@ -103,15 +103,22 @@ trait EntityQueryBuilderTrait
         $joins = [];
         foreach ($selectedIdxs as $selectedIdx) {
             $selectedIdx = $classMetadata['cols'][$selectedIdx];
-            $selects[] = $selectedIdx['joinedAs'] . '.' . $selectedIdx['fieldName']
-                . ' AS ' . $selectedIdx['joinedAsRaw'] . ClassMetadataHelper::$glue . $selectedIdx['fieldName'];
-            if ($join = $classMetadata['associations'][$selectedIdx['joinedAs']] ?? null) {
-                $joins[$selectedIdx['joinedAs']] = implode(' ', $join);
+            // store select as fragments
+            $selects[] = $selectedIdx['selectAs'];
+            // parse each association path and store the joinAs fragments
+            $association = '';
+            foreach (explode(ClassMetadataHelper::$glue, $selectedIdx['path']) as $path) {
+                $association .= empty($association) ? $path : ClassMetadataHelper::$glue . $path;
+                if ($join = $classMetadata['associations_idx_raw'][$association] ?? null) {
+                    // alias is the idx of the association
+                    // we use the alias to avoid duplicate join fragments
+                    $joins[$join['alias']] = implode(' ', $join);
+                }
             }
         }
         $dql = static::select(
             $selects,
-            $classMetadata['namespace'] . ' ' . $classMetadata['joinedAs']
+            $classMetadata['namespaceAndAlias']
         );
         $dql .= implode('', array_values($joins));
         $dql .= static::where($where);

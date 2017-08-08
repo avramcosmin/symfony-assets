@@ -54,6 +54,7 @@ trait ClassMetadataTrait
          */
         $classMap = $em->getClassMetadata($class);
         $reflectionClass = new \ReflectionClass($class);
+        // ClassMetadata
         $name = $reflectionClass->getShortName();
         $alias = $alias ?: strtolower($name);
         if (!isset($classMetadata['initialized'])) {
@@ -62,13 +63,13 @@ trait ClassMetadataTrait
             $classMetadata['namespace'] = $class;
             $classMetadata['name'] = $name;
             $classMetadata['alias'] = $alias;
-            $classMetadata['cols'] = [];
-            $classMetadata['orderBy'] = null;
+            $classMetadata['orderBy'] = null; // path to a property hashed
             $classMetadata['orderDir'] = 'desc';
+            $classMetadata['cols'] = []; // all properties & associations with their respective metadata
+            $classMetadata['cols_tt'] = []; // columns used by the table template engine
             $classMetadata['associations'] = [];
-            $classMetadata['cols_tt'] = [];
             $classMetadata['path_history'] = [];
-            $classMetadata['path'] = [];
+            $classMetadata['path'] = []; // path to the properties of the class (should be the class alias)
         }
         $classMetadata['path'][] = $alias;
         $path = implode(static::$glue, $classMetadata['path']);
@@ -77,6 +78,7 @@ trait ClassMetadataTrait
         $joinedAs = static::hash($path);
         if (!isset($classMetadata['joinedAs'])) {
             $classMetadata['joinedAs'] = $joinedAs;
+            $classMetadata['namespaceAndAlias'] = $class . ' ' . $joinedAs;
         }
 
         foreach ($classMap->getFieldNames() as $fieldName) {
@@ -87,17 +89,22 @@ trait ClassMetadataTrait
             $idx = static::hash($idx_raw);
             $fieldMap = $classMap->fieldMappings[$fieldName];
             $fieldMap['orderBy'] = $joinedAs . '.' . $fieldName;
+            // by default sort by id
             if (!$classMetadata['orderBy'] && $fieldMap['id'] === true) {
                 $classMetadata['orderBy'] = $fieldMap['orderBy'];
             }
+            $select = $joinedAs . '.' . $fieldName;
+            $selectAs = $path . static::$glue . $fieldName;
+            $fieldMap['select'] = $select;
+            $fieldMap['selectAs'] = $select . ' AS ' . $selectAs;
             $fieldMap['entityNamespace'] = $class;
             $fieldMap['entityName'] = $name;
             $fieldMap['entityAlias'] = $alias;
-            $fieldMap['path'] = $path;
             $fieldMap['glue'] = static::$glue;
             $fieldMap['prefix'] = $prefix;
             $fieldMap['joinedAs'] = $joinedAs;
             $fieldMap['joinedAsRaw'] = $path;
+            $fieldMap['path'] = $path;
             $fieldMap['idx'] = $idx;
             $fieldMap['idxRaw'] = $idx_raw;
             $fieldMap['title'] = StringHelper::camelCaseToUCWords(
@@ -117,6 +124,9 @@ trait ClassMetadataTrait
 
         if ($depth >= 0) {
             foreach ($classMap->getAssociationNames() as $associationName) {
+                // skip all ArrayCollection associations
+                // skip all associations from the exclusion array
+                // skip all associations which have been already parsed
                 if (
                     $accessor->getValue($instance, $associationName) instanceof ArrayCollection
                     ||
@@ -126,9 +136,11 @@ trait ClassMetadataTrait
                 ) {
                     continue;
                 }
+                // prefix = path + glue
                 $idx_raw = $prefix . $associationName;
                 $idx = static::hash($idx_raw);
                 $associationMapping = $classMap->associationMappings[$associationName];
+                // index associations by idx (hashed idx_raw
                 $classMetadata['associations'][$idx] = [
                     'joinStrategy' => static::getJoinStrategyByPropertyAnnotation(
                         $class,
@@ -138,6 +150,8 @@ trait ClassMetadataTrait
                     'association' => $joinedAs . '.' . $associationName,
                     'alias' => $idx
                 ];
+                // store a copy of the associations under the idx_raw key
+                $classMetadata['associations_idx_raw'][$idx_raw] = $classMetadata['associations'][$idx];
                 static::getClassMetadata(
                     $classMetadata,
                     $associationMapping['targetEntity'],
