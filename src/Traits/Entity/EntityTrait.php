@@ -17,6 +17,7 @@ trait EntityTrait
      * @param ValidatorInterface $validator
      * @param ObjectManager $em
      * @return mixed
+     * @throws \Throwable
      */
     public static function EntityCreate(
         ResourceAbstract $entityResource,
@@ -43,6 +44,7 @@ trait EntityTrait
      * @param ValidatorInterface $validator
      * @param ObjectManager $em
      * @return mixed
+     * @throws \Throwable
      */
     public static function EntityChange(
         ResourceAbstract $entityResource,
@@ -82,6 +84,7 @@ trait EntityTrait
      * @param ObjectManager $em
      * @param bool $persist
      * @return mixed
+     * @throws \Throwable
      */
     private static function EntityChangeOrCreate(
         ResourceAbstract $entityResource,

@@ -76,11 +76,11 @@ trait ControllerTrait
 
     /**
      * @param ResourceAbstract $entityResource
-     * @param string $method
      * @param $entity
      * @param ValidatorInterface $validator
      * @param ObjectManager $em
      * @param ViewHandlerInterface $viewHandler
+     * @param string $method
      * @param array $groups
      * @param int|null $statusCode
      * @return Response
@@ -88,11 +88,11 @@ trait ControllerTrait
      */
     public static function CreateAndSerialize(
         ResourceAbstract $entityResource,
-        string $method,
         $entity,
         ValidatorInterface $validator,
         ObjectManager $em,
         ViewHandlerInterface $viewHandler,
+        string $method = 'create',
         array $groups = [],
         int $statusCode = Response::HTTP_CREATED
     ): Response
@@ -113,11 +113,11 @@ trait ControllerTrait
 
     /**
      * @param ResourceAbstract $entityResource
-     * @param string $method
      * @param $entity
      * @param ValidatorInterface $validator
      * @param ObjectManager $em
      * @param ViewHandlerInterface $viewHandler
+     * @param string $method
      * @param array $groups
      * @param int|null $statusCode
      * @return Response
@@ -125,11 +125,11 @@ trait ControllerTrait
      */
     public static function ChangeAndSerialize(
         ResourceAbstract $entityResource,
-        string $method,
         $entity,
         ValidatorInterface $validator,
         ObjectManager $em,
         ViewHandlerInterface $viewHandler,
+        string $method = 'change',
         array $groups = [],
         int $statusCode = null
     ): Response

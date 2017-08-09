@@ -8,6 +8,7 @@ use Mindlahus\SymfonyAssets\Helper\ThrowableHelper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 /**
@@ -22,7 +23,7 @@ class ExceptionListener
      * [
      *  status      HTTP status code
      *  code        Exception code
-     *  type        throwable|validation_errors|not_found
+     *  type        throwable|validation_errors|not_found|forbidden
      *  content     [message (string), errors (array)]
      *  idx         random string
      * ]
@@ -50,6 +51,10 @@ class ExceptionListener
         if ($exception instanceof ValidationFailedException) {
             $data['content'] = json_decode($message);
             $data['type'] = 'validation_errors';
+        }
+
+        if($exception instanceof AccessDeniedHttpException) {
+            $data['type'] = 'forbidden';
         }
 
         if ($statusCode === Response::HTTP_NOT_FOUND) {
