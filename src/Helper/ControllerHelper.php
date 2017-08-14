@@ -71,7 +71,7 @@ class ControllerHelper
         ContainerInterface $container,
         array $groups = [],
         string $method = 'change',
-        int $statusCode = Response::HTTP_CREATED
+        int $statusCode = Response::HTTP_OK
     ): Response
     {
         /**
