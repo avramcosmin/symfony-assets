@@ -25,12 +25,11 @@ trait ControllerTrait
      * @return Response
      * @throws \Throwable
      */
-    public static function FindOneByIdAndSerialize(
-        int $id,
-        string $repository,
-        ViewHandlerInterface $viewHandler,
-        ObjectManager $em,
-        array $groups = []
+    public static function FindOneByIdAndSerialize(int $id,
+                                                   string $repository,
+                                                   ViewHandlerInterface $viewHandler,
+                                                   ObjectManager $em,
+                                                   array $groups = []
     ): Response
     {
         return static::FindOneByAndSerialize(
@@ -53,12 +52,11 @@ trait ControllerTrait
      * @return Response
      * @throws \Throwable
      */
-    public static function FindOneByAndSerialize(
-        array $findBy,
-        string $repository,
-        ViewHandlerInterface $viewHandler,
-        ObjectManager $em,
-        array $groups = []
+    public static function FindOneByAndSerialize(array $findBy,
+                                                 string $repository,
+                                                 ViewHandlerInterface $viewHandler,
+                                                 ObjectManager $em,
+                                                 array $groups = []
     ): Response
     {
         $entity = $em->getRepository($repository)->findOneBy($findBy);
@@ -69,6 +67,27 @@ trait ControllerTrait
 
         return ResponseHelper::Serialize(
             $entity,
+            $viewHandler,
+            $groups
+        );
+    }
+
+    /**
+     * @param string $repository
+     * @param ViewHandlerInterface $viewHandler
+     * @param ObjectManager $em
+     * @param array $groups
+     * @return Response
+     * @throws \Throwable
+     */
+    public static function GetManyAndSerialize(string $repository,
+                                               ViewHandlerInterface $viewHandler,
+                                               ObjectManager $em,
+                                               array $groups = []
+    ): Response
+    {
+        return ResponseHelper::Serialize(
+            $em->getRepository($repository)->findAll(),
             $viewHandler,
             $groups
         );
@@ -86,15 +105,14 @@ trait ControllerTrait
      * @return Response
      * @throws \Throwable
      */
-    public static function CreateAndSerialize(
-        ResourceAbstract $entityResource,
-        $entity,
-        ValidatorInterface $validator,
-        ObjectManager $em,
-        ViewHandlerInterface $viewHandler,
-        string $method = 'create',
-        array $groups = [],
-        int $statusCode = Response::HTTP_CREATED
+    public static function CreateAndSerialize(ResourceAbstract $entityResource,
+                                              $entity,
+                                              ValidatorInterface $validator,
+                                              ObjectManager $em,
+                                              ViewHandlerInterface $viewHandler,
+                                              string $method = 'create',
+                                              array $groups = [],
+                                              int $statusCode = Response::HTTP_CREATED
     ): Response
     {
         return ResponseHelper::Serialize(
@@ -123,15 +141,14 @@ trait ControllerTrait
      * @return Response
      * @throws \Throwable
      */
-    public static function ChangeAndSerialize(
-        ResourceAbstract $entityResource,
-        $entity,
-        ValidatorInterface $validator,
-        ObjectManager $em,
-        ViewHandlerInterface $viewHandler,
-        string $method = 'change',
-        array $groups = [],
-        int $statusCode = null
+    public static function ChangeAndSerialize(ResourceAbstract $entityResource,
+                                              $entity,
+                                              ValidatorInterface $validator,
+                                              ObjectManager $em,
+                                              ViewHandlerInterface $viewHandler,
+                                              string $method = 'change',
+                                              array $groups = [],
+                                              int $statusCode = null
     ): Response
     {
         return ResponseHelper::Serialize(
@@ -156,11 +173,10 @@ trait ControllerTrait
      * @return Response
      * @throws \Throwable
      */
-    public static function RemoveAndSerialize(
-        $entity,
-        ObjectManager $em,
-        ViewHandlerInterface $viewHandler,
-        array $groups = []
+    public static function RemoveAndSerialize($entity,
+                                              ObjectManager $em,
+                                              ViewHandlerInterface $viewHandler,
+                                              array $groups = []
     ): Response
     {
         EntityTrait::EntityRemove($entity, $em);
@@ -183,13 +199,12 @@ trait ControllerTrait
      * @return BinaryFileResponse
      * @throws \Throwable
      */
-    public static function jwtStreamOrDownloadFileFromPath(
-        int $exp,
-        string $filePath,
-        string $fileName = null,
-        bool $deleteOnCompleted = true,
-        bool $inlineDisposition = true,
-        bool $knownSize = true
+    public static function jwtStreamOrDownloadFileFromPath(int $exp,
+                                                           string $filePath,
+                                                           string $fileName = null,
+                                                           bool $deleteOnCompleted = true,
+                                                           bool $inlineDisposition = true,
+                                                           bool $knownSize = true
     ): BinaryFileResponse
     {
         DownloadTrait::jwtIsValidSession($exp);
@@ -212,11 +227,10 @@ trait ControllerTrait
      * @return StreamedResponse
      * @throws \Throwable
      */
-    public static function jwtStreamOrDownloadOctetStream(
-        int $exp,
-        string $octetStream,
-        string $fileName,
-        bool $inlineDisposition = true
+    public static function jwtStreamOrDownloadOctetStream(int $exp,
+                                                          string $octetStream,
+                                                          string $fileName,
+                                                          bool $inlineDisposition = true
     ): StreamedResponse
     {
         DownloadTrait::jwtIsValidSession($exp);
@@ -235,10 +249,9 @@ trait ControllerTrait
      * @return Response
      * @throws \Throwable
      */
-    public static function jwtForceDownload(
-        int $exp,
-        Response $response,
-        string $fileName
+    public static function jwtForceDownload(int $exp,
+                                            Response $response,
+                                            string $fileName
     ): Response
     {
         DownloadTrait::jwtIsValidSession($exp);
@@ -258,10 +271,9 @@ trait ControllerTrait
      * @return Response
      * @throws \Throwable
      */
-    public static function jwtGetEncryptedPayload(
-        array $payload,
-        string $encryptionKey,
-        ViewHandlerInterface $viewHandler
+    public static function jwtGetEncryptedPayload(array $payload,
+                                                  string $encryptionKey,
+                                                  ViewHandlerInterface $viewHandler
     ): Response
     {
         return ResponseHelper::Serialize(
