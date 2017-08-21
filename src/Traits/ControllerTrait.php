@@ -94,6 +94,54 @@ trait ControllerTrait
     }
 
     /**
+     * @param string $repository
+     * @param ViewHandlerInterface $viewHandler
+     * @param ObjectManager $em
+     * @param array $findBy
+     * @param array $groups
+     * @return Response
+     * @throws \Throwable
+     */
+    public static function FindManyByAndSerialize(string $repository,
+                                                  ViewHandlerInterface $viewHandler,
+                                                  ObjectManager $em,
+                                                  array $findBy,
+                                                  array $groups = []
+    ): Response
+    {
+        return ResponseHelper::Serialize(
+            $em->getRepository($repository)->findBy($findBy),
+            $viewHandler,
+            $groups
+        );
+    }
+
+    /**
+     * @param string $repository
+     * @param ViewHandlerInterface $viewHandler
+     * @param ObjectManager $em
+     * @param string $method
+     * @param array $params
+     * @param array $groups
+     * @return Response
+     * @throws \Throwable
+     */
+    public static function FindManyAndSerialize(string $repository,
+                                                    ViewHandlerInterface $viewHandler,
+                                                    ObjectManager $em,
+                                                    string $method,
+                                                    array $params,
+                                                    array $groups = []
+    ): Response
+    {
+        return ResponseHelper::Serialize(
+            $em->getRepository($repository)->{$method}($params),
+            $viewHandler,
+            $groups
+        );
+    }
+
+    /**
      * @param ResourceAbstract $entityResource
      * @param $entity
      * @param ValidatorInterface $validator
