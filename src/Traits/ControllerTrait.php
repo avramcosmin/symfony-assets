@@ -121,21 +121,26 @@ trait ControllerTrait
      * @param ViewHandlerInterface $viewHandler
      * @param ObjectManager $em
      * @param string $method
-     * @param array $params
+     * @param array|null $params
      * @param array $groups
      * @return Response
      * @throws \Throwable
      */
-    public static function FindManyAndSerialize(string $repository,
-                                                    ViewHandlerInterface $viewHandler,
-                                                    ObjectManager $em,
-                                                    string $method,
-                                                    array $params,
-                                                    array $groups = []
+    public static function FindUsingMethodAndSerialize(string $repository,
+                                                       ViewHandlerInterface $viewHandler,
+                                                       ObjectManager $em,
+                                                       string $method,
+                                                       array $params = null,
+                                                       array $groups = []
     ): Response
     {
+        if ($params) {
+            $data = $em->getRepository($repository)->{$method}($params);
+        } else {
+            $data = $em->getRepository($repository)->{$method}();
+        }
         return ResponseHelper::Serialize(
-            $em->getRepository($repository)->{$method}($params),
+            $data,
             $viewHandler,
             $groups
         );
