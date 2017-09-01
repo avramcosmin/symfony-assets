@@ -87,7 +87,7 @@ class ControllerHelper
             throw new NotFoundException('Not found! Resource with id[' . $id . '] does not exist.');
         }
 
-        return static::CreateAndSerialize(
+        return static::ChangeAndSerialize(
             new $entityResourceClass(
                 $request,
                 $em,
