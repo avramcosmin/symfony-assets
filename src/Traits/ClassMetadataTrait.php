@@ -89,7 +89,7 @@ trait ClassMetadataTrait
             $classMetadata['namespace'] = $class;
             $classMetadata['name'] = $name;
             $classMetadata['alias'] = $alias;
-            $classMetadata['orderBy'] = null; // path to a property hashed
+            $classMetadata['orderBy'] = null; // path to a hashed property
             $classMetadata['orderDir'] = 'desc';
             $classMetadata['cols'] = []; // all properties & associations with their respective metadata
             $classMetadata['cols_tt'] = []; // columns used by the table template engine
@@ -118,16 +118,17 @@ trait ClassMetadataTrait
 
             $idx_raw = $prefix . $fieldName;
             $idx = static::hash($idx_raw);
+            $select = $joinedAs . '.' . $fieldName;
+            $selectAsAlias = $idx; // alternatively $idx_raw
             $fieldMap = $classMap->fieldMappings[$fieldName];
-            $fieldMap['orderBy'] = $joinedAs . '.' . $fieldName;
+            $fieldMap['orderBy'] = $select;
             // by default sort by id
             if (!$classMetadata['orderBy'] && $fieldMap['id'] === true) {
                 $classMetadata['orderBy'] = $fieldMap['orderBy'];
             }
-            $select = $joinedAs . '.' . $fieldName;
-            $selectAs = $path . static::$glue . $fieldName;
             $fieldMap['select'] = $select;
-            $fieldMap['selectAs'] = $select . ' AS ' . $selectAs;
+            $fieldMap['selectAsAlias'] = $selectAsAlias;
+            $fieldMap['selectAs'] = $select . ' AS ' . $selectAsAlias;
             $fieldMap['entityNamespace'] = $class;
             $fieldMap['entityName'] = $name;
             $fieldMap['entityAlias'] = $alias;
