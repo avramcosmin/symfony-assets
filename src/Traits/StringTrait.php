@@ -111,26 +111,26 @@ trait StringTrait
      * @param string|array|\stdClass $str
      * @param bool $jsonEncode
      * @return string
-     * @throws \Exception
+     * @throws \Throwable
      */
     public static function base64url_encode($str, bool $jsonEncode = false): string
     {
         if (!is_string($str) && !is_array($str) && !$str instanceof \stdClass) {
-            throw new \Exception('`str` should be a string, array or at most an instance of \stdClass().');
+            throw new \ErrorException('`str` should be a string, array or at most an instance of \stdClass().');
         }
 
         if ($jsonEncode === true) {
             $str = json_encode($str);
 
             if (!$str) {
-                throw new \Exception('`base64url_encode()` failed to `json_encode()`.');
+                throw new \ErrorException('`base64url_encode()` failed to `json_encode()`.');
             }
         }
 
         $str = base64_encode($str);
 
         if (!$str) {
-            throw new \Exception('`base64url_encode` failed to `base64_encode()`.');
+            throw new \ErrorException('`base64url_encode` failed to `base64_encode()`.');
         }
 
         return strtr($str, '+/=', '-_,');
@@ -140,7 +140,7 @@ trait StringTrait
      * @param string|bool $str
      * @param bool $jsonDecode
      * @return mixed
-     * @throws \Exception
+     * @throws \Throwable
      */
     public static function base64url_decode(string $str, bool $jsonDecode = false)
     {
@@ -148,14 +148,14 @@ trait StringTrait
         $str = base64_decode($str);
 
         if (!$str) {
-            throw new \Exception('`base64url_decode` failed to `base64_decode()`.');
+            throw new \ErrorException('`base64url_decode` failed to `base64_decode()`.');
         }
 
         if ($jsonDecode === true) {
             $str = json_decode($str, true);
 
             if (!$str) {
-                throw new \Exception('`base64url_decode()` failed to `json_encode()`.');
+                throw new \ErrorException('`base64url_decode()` failed to `json_encode()`.');
             }
         }
 

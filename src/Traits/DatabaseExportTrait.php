@@ -76,7 +76,7 @@ trait DatabaseExportTrait
             }
             shell_exec($cmd);
         } catch (\Throwable $e) {
-            throw new \Exception('Failed to executing `database-dumper.sh`.', 0, $e);
+            throw new \ErrorException('Failed to executing `database-dumper.sh`.', 0, $e);
         }
 
         switch (true) {
@@ -92,7 +92,7 @@ trait DatabaseExportTrait
 
         $filePath = $options['dist_dir'] . $options['archive_name'] . $ext;
         if (!file_exists($filePath)) {
-            throw new \Exception('Database Dump failed. No dump file!');
+            throw new \ErrorException('Database Dump failed. No dump file!');
         }
 
         return $filePath;

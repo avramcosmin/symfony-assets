@@ -162,7 +162,7 @@ trait DownloadTrait
     public static function jwtIsValidSession(int $time): void
     {
         if (time() > $time) {
-            throw new \Exception('Invalid download session! Time expired.');
+            throw new \ErrorException('Invalid download session! Time expired.');
         }
     }
 }
