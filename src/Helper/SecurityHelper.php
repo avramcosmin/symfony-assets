@@ -32,13 +32,14 @@ class SecurityHelper
         $token = static::getTokenStorage($container);
         $authorizationChecker = static::getAuthorizationChecker($container);
 
-        if (true !== $token->isAuthenticated()) {
-            throw new AccessDeniedHttpException('Not authenticated!');
-        }
-
-        if (!empty($roles) && true !== $authorizationChecker->isGranted($roles)) {
+        if (empty($roles)
+            ||
+            true !== $token->isAuthenticated()
+            ||
+            true !== $authorizationChecker->isGranted($roles)
+        ) {
             throw new AccessDeniedHttpException(
-                'Not authenticated!'
+                'Denied access. Authenticate or Grant Role!'
             );
         }
     }
