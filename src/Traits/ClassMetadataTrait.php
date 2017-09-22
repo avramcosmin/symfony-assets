@@ -150,7 +150,8 @@ trait ClassMetadataTrait
             $classMetadata['cols_tt'][$idx] = [
                 'idx' => $idx,
                 'title' => $fieldMap['title'],
-                'visible' => !in_array($idx, $selectedIdxs, false)
+                'showOnSearch' => true,
+                'selected' => !in_array($idx, $selectedIdxs, false)
             ];
         }
 
