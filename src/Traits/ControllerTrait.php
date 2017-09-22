@@ -2,7 +2,7 @@
 
 namespace Mindlahus\SymfonyAssets\Traits;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\View\ViewHandlerInterface;
 use Mindlahus\SymfonyAssets\AbstractInterface\ResourceAbstract;
 use Mindlahus\SymfonyAssets\Exception\NotFoundException;
@@ -20,7 +20,7 @@ trait ControllerTrait
      * @param int $id
      * @param string $repository
      * @param ViewHandlerInterface $viewHandler
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @param array $groups
      * @return Response
      * @throws \Throwable
@@ -28,7 +28,7 @@ trait ControllerTrait
     public static function FindOneByIdAndSerialize(int $id,
                                                    string $repository,
                                                    ViewHandlerInterface $viewHandler,
-                                                   ObjectManager $em,
+                                                   EntityManagerInterface $em,
                                                    array $groups = []
     ): Response
     {
@@ -47,7 +47,7 @@ trait ControllerTrait
      * @param array $findBy
      * @param string $repository
      * @param ViewHandlerInterface $viewHandler
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @param array $groups
      * @return Response
      * @throws \Throwable
@@ -55,7 +55,7 @@ trait ControllerTrait
     public static function FindOneByAndSerialize(array $findBy,
                                                  string $repository,
                                                  ViewHandlerInterface $viewHandler,
-                                                 ObjectManager $em,
+                                                 EntityManagerInterface $em,
                                                  array $groups = []
     ): Response
     {
@@ -75,14 +75,14 @@ trait ControllerTrait
     /**
      * @param string $repository
      * @param ViewHandlerInterface $viewHandler
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @param array $groups
      * @return Response
      * @throws \Throwable
      */
     public static function GetManyAndSerialize(string $repository,
                                                ViewHandlerInterface $viewHandler,
-                                               ObjectManager $em,
+                                               EntityManagerInterface $em,
                                                array $groups = []
     ): Response
     {
@@ -96,7 +96,7 @@ trait ControllerTrait
     /**
      * @param string $repository
      * @param ViewHandlerInterface $viewHandler
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @param array $findBy
      * @param array $groups
      * @return Response
@@ -104,7 +104,7 @@ trait ControllerTrait
      */
     public static function FindManyByAndSerialize(string $repository,
                                                   ViewHandlerInterface $viewHandler,
-                                                  ObjectManager $em,
+                                                  EntityManagerInterface $em,
                                                   array $findBy,
                                                   array $groups = []
     ): Response
@@ -119,7 +119,7 @@ trait ControllerTrait
     /**
      * @param string $repository
      * @param ViewHandlerInterface $viewHandler
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @param string $method
      * @param array|null $params
      * @param array $groups
@@ -128,7 +128,7 @@ trait ControllerTrait
      */
     public static function FindUsingMethodAndSerialize(string $repository,
                                                        ViewHandlerInterface $viewHandler,
-                                                       ObjectManager $em,
+                                                       EntityManagerInterface $em,
                                                        string $method,
                                                        array $params = null,
                                                        array $groups = []
@@ -150,7 +150,7 @@ trait ControllerTrait
      * @param ResourceAbstract $entityResource
      * @param $entity
      * @param ValidatorInterface $validator
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @param ViewHandlerInterface $viewHandler
      * @param string $method
      * @param array $groups
@@ -161,7 +161,7 @@ trait ControllerTrait
     public static function CreateAndSerialize(ResourceAbstract $entityResource,
                                               $entity,
                                               ValidatorInterface $validator,
-                                              ObjectManager $em,
+                                              EntityManagerInterface $em,
                                               ViewHandlerInterface $viewHandler,
                                               string $method = 'create',
                                               array $groups = [],
@@ -186,7 +186,7 @@ trait ControllerTrait
      * @param ResourceAbstract $entityResource
      * @param $entity
      * @param ValidatorInterface $validator
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @param ViewHandlerInterface $viewHandler
      * @param string $method
      * @param array $groups
@@ -197,7 +197,7 @@ trait ControllerTrait
     public static function ChangeAndSerialize(ResourceAbstract $entityResource,
                                               $entity,
                                               ValidatorInterface $validator,
-                                              ObjectManager $em,
+                                              EntityManagerInterface $em,
                                               ViewHandlerInterface $viewHandler,
                                               string $method = 'change',
                                               array $groups = [],
@@ -220,14 +220,14 @@ trait ControllerTrait
 
     /**
      * @param $entity
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @param ViewHandlerInterface $viewHandler
      * @param array $groups
      * @return Response
      * @throws \Throwable
      */
     public static function RemoveAndSerialize($entity,
-                                              ObjectManager $em,
+                                              EntityManagerInterface $em,
                                               ViewHandlerInterface $viewHandler,
                                               array $groups = []
     ): Response

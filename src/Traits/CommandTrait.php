@@ -3,7 +3,6 @@
 namespace Mindlahus\SymfonyAssets\Traits;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\PersistentCollection;
@@ -37,13 +36,13 @@ trait CommandTrait
     /**
      * @param OutputInterface $output
      * @param ContainerInterface $container
-     * @param ObjectManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param Logger $logger
      */
     private function init(
         OutputInterface $output,
         ContainerInterface $container,
-        ObjectManager $entityManager,
+        EntityManagerInterface $entityManager,
         Logger $logger
     ): void
     {

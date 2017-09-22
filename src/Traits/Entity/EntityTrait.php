@@ -2,7 +2,7 @@
 
 namespace Mindlahus\SymfonyAssets\Traits\Entity;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Mindlahus\SymfonyAssets\AbstractInterface\ResourceAbstract;
 use Mindlahus\SymfonyAssets\Exception\ValidationFailedException;
 use Mindlahus\SymfonyAssets\Helper\StringHelper;
@@ -15,7 +15,7 @@ trait EntityTrait
      * @param string $method
      * @param $entity
      * @param ValidatorInterface $validator
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @return mixed
      * @throws \Throwable
      */
@@ -24,7 +24,7 @@ trait EntityTrait
         string $method,
         $entity,
         ValidatorInterface $validator,
-        ObjectManager $em
+        EntityManagerInterface $em
     )
     {
         return static::EntityChangeOrCreate(
@@ -42,7 +42,7 @@ trait EntityTrait
      * @param string $method
      * @param $entity
      * @param ValidatorInterface $validator
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @return mixed
      * @throws \Throwable
      */
@@ -51,7 +51,7 @@ trait EntityTrait
         string $method,
         $entity,
         ValidatorInterface $validator,
-        ObjectManager $em
+        EntityManagerInterface $em
     )
     {
         return static::EntityChangeOrCreate(
@@ -65,11 +65,11 @@ trait EntityTrait
 
     /**
      * @param $entity
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      */
     public static function EntityRemove(
         $entity,
-        ObjectManager $em
+        EntityManagerInterface $em
     ): void
     {
         $em->remove($entity);
@@ -81,7 +81,7 @@ trait EntityTrait
      * @param string $method
      * @param $entity
      * @param ValidatorInterface $validator
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @param bool $persist
      * @return mixed
      * @throws \Throwable
@@ -91,7 +91,7 @@ trait EntityTrait
         string $method,
         $entity,
         ValidatorInterface $validator,
-        ObjectManager $em,
+        EntityManagerInterface $em,
         bool $persist = false
     )
     {

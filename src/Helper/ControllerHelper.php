@@ -2,7 +2,7 @@
 
 namespace Mindlahus\SymfonyAssets\Helper;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Mindlahus\SymfonyAssets\Exception\NotFoundException;
 use Mindlahus\SymfonyAssets\Traits\ControllerTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -75,7 +75,7 @@ class ControllerHelper
     ): Response
     {
         /**
-         * @var $em ObjectManager
+         * @var $em EntityManagerInterface
          */
         $em = $container->get('doctrine.orm.entity_manager');
         $entity = $em->getRepository($entityClass)

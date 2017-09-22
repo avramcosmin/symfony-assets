@@ -2,7 +2,7 @@
 
 namespace Mindlahus\SymfonyAssets\AbstractInterface;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Mindlahus\SymfonyAssets\Helper\RequestHelper;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,7 +17,7 @@ abstract class ResourceAbstract implements ResourceInterface
      */
     protected $request;
     /**
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
     /**
@@ -32,6 +32,10 @@ abstract class ResourceAbstract implements ResourceInterface
      * @var ContainerInterface
      */
     protected $container;
+    /**
+     * @var ContainerInterface
+     */
+    public static $containerStatic;
 
     protected $requestContent;
 
@@ -41,14 +45,14 @@ abstract class ResourceAbstract implements ResourceInterface
      *
      * ResourceAbstract constructor.
      * @param Request $request
-     * @param ObjectManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param Logger $logger
      * @param \stdClass|null $requestContent
      * @throws \Throwable
      */
     public function __construct(
         Request $request,
-        ObjectManager $entityManager,
+        EntityManagerInterface $entityManager,
         Logger $logger,
         \stdClass $requestContent = null
     )
@@ -85,9 +89,9 @@ abstract class ResourceAbstract implements ResourceInterface
     }
 
     /**
-     * @return ObjectManager
+     * @return EntityManagerInterface
      */
-    public function getEntityManager(): ObjectManager
+    public function getEntityManager(): EntityManagerInterface
     {
         return $this->entityManager;
     }

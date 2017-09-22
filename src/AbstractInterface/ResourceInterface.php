@@ -1,6 +1,6 @@
 <?php namespace Mindlahus\SymfonyAssets\AbstractInterface;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,9 +24,9 @@ interface ResourceInterface
     public function getRequest(): Request;
 
     /**
-     * @return ObjectManager
+     * @return EntityManagerInterface
      */
-    public function getEntityManager(): ObjectManager;
+    public function getEntityManager(): EntityManagerInterface;
 
     /**
      * @return PropertyAccessor

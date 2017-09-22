@@ -5,7 +5,7 @@ namespace Mindlahus\SymfonyAssets\Traits;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Mindlahus\SymfonyAssets\Helper\CryptoHelper;
 use Mindlahus\SymfonyAssets\Helper\EntityQueryBuilderHelper;
 use Mindlahus\SymfonyAssets\Helper\StringHelper;
@@ -16,6 +16,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 trait ClassMetadataTrait
 {
     public static $glue = '_';
+    public static $selectAsAlias = 'idx'; // alternatively 'idx_raw'
+    public static $orderDir = 'desc';
 
     private static $exclusions = [
         'createdBy',
@@ -56,7 +58,7 @@ trait ClassMetadataTrait
     /**
      * @param array $classMetadata
      * @param string $class
-     * @param ObjectManager $em
+     * @param EntityManagerInterface $em
      * @param PropertyAccessor $accessor
      * @param array $selectedIdxs
      * @param string|null $alias
@@ -66,7 +68,7 @@ trait ClassMetadataTrait
     public static function getClassMetadata(
         array &$classMetadata,
         string $class,
-        ObjectManager $em,
+        EntityManagerInterface $em,
         PropertyAccessor $accessor,
         array $selectedIdxs = [],
         string $alias = null,
@@ -90,7 +92,7 @@ trait ClassMetadataTrait
             $classMetadata['name'] = $name;
             $classMetadata['alias'] = $alias;
             $classMetadata['orderBy'] = null; // path to a hashed property
-            $classMetadata['orderDir'] = 'desc';
+            $classMetadata['orderDir'] = static::$orderDir;
             $classMetadata['cols'] = []; // all properties & associations with their respective metadata
             $classMetadata['cols_tt'] = []; // columns used by the table template engine
             $classMetadata['associations'] = [];
@@ -108,18 +110,19 @@ trait ClassMetadataTrait
         }
 
         foreach ($classMap->getFieldNames() as $fieldName) {
+            $idx_raw = $prefix . $fieldName;
+
             if (
                 in_array($fieldName, static::$exclusions, false)
                 &&
-                !in_array($prefix . $fieldName, static::$forcedInclusions, false)
+                !in_array($idx_raw, static::$forcedInclusions, false)
             ) {
                 continue;
             }
 
-            $idx_raw = $prefix . $fieldName;
             $idx = static::hash($idx_raw);
             $select = $joinedAs . '.' . $fieldName;
-            $selectAsAlias = $idx; // alternatively $idx_raw
+            $selectAsAlias = ${static::$selectAsAlias}; // alternatively $idx_raw
             $fieldMap = $classMap->fieldMappings[$fieldName];
             $fieldMap['orderBy'] = $select;
             // by default sort by id
@@ -140,7 +143,7 @@ trait ClassMetadataTrait
             $fieldMap['idx'] = $idx;
             $fieldMap['idxRaw'] = $idx_raw;
             $fieldMap['title'] = StringHelper::camelCaseToUCWords(
-                ucwords(str_replace(static::$glue, ' ', $idx_raw))
+                ucwords(str_replace(static::$glue, ' / ', $idx_raw))
             );
             $fieldMap['depth'] = $classMetadata['depth'] - $depth;
             $classMetadata['cols'][$idx] = $fieldMap;

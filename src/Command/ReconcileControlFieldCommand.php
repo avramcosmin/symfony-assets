@@ -2,7 +2,7 @@
 
 namespace Mindlahus\SymfonyAssets\Command;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Mindlahus\SymfonyAssets\AbstractInterface\CommandTraitInterface;
 use Mindlahus\SymfonyAssets\AbstractInterface\ControlFieldInterface;
 use Mindlahus\SymfonyAssets\Traits\CommandTrait;
@@ -34,7 +34,7 @@ class ReconcileControlFieldCommand extends ContainerAwareCommand implements Comm
     {
         $container = $this->getContainer();
         /**
-         * @var ObjectManager $entityManager
+         * @var EntityManagerInterface $entityManager
          */
         $entityManager = $container->get('doctrine.orm.entity_manager');
         /**
