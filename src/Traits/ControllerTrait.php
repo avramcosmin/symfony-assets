@@ -237,8 +237,7 @@ trait ControllerTrait
         return ResponseHelper::Serialize(
             [],
             $viewHandler,
-            $groups,
-            Response::HTTP_NO_CONTENT
+            $groups
         );
     }
 
