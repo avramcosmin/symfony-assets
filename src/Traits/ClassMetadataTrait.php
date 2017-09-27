@@ -147,6 +147,8 @@ trait ClassMetadataTrait
             );
             $fieldMap['depth'] = $classMetadata['depth'] - $depth;
             $classMetadata['cols'][$idx] = $fieldMap;
+            // store a copy of the col under idx_raw
+            $classMetadata['cols_idx_raw'][$idx_raw] = $classMetadata['cols'][$idx];
             $classMetadata['cols_tt'][$idx] = [
                 'idx' => $idx,
                 'title' => $fieldMap['title'],

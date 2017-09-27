@@ -91,6 +91,7 @@ trait EntityQueryBuilderTrait
      * @param array $where
      * @param string|null $orderBy
      * @param string|null $orderDir
+     * @param bool $forceSelectTheId
      * @return string
      */
     public static function buildDqlFromClassMetadata(
@@ -98,11 +99,17 @@ trait EntityQueryBuilderTrait
         array $selectedIdxs,
         array $where = [],
         string $orderBy = null,
-        string $orderDir = null
+        string $orderDir = null,
+        bool $forceSelectTheId = true
     ): string
     {
         $selects = [];
         $joins = [];
+
+        if ($forceSelectTheId === true) {
+            $selects[] = $classMetadata['joinedAs'] . '.id AS _id';
+        }
+
         foreach ($selectedIdxs as $selectedIdx) {
             $selectedIdx = $classMetadata['cols'][$selectedIdx];
             // store select as fragments
