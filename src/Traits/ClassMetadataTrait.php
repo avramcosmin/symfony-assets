@@ -97,7 +97,6 @@ trait ClassMetadataTrait
             $classMetadata['cols_idx_raw'] = []; // store a copy of the col under idx_raw
             $classMetadata['cols_tt'] = []; // columns used by the table template engine
             $classMetadata['associations'] = [];
-            $classMetadata['associations_idx_raw'] = []; // store a copy of the associations under the idx_raw key
             $classMetadata['path_history'] = [];
             $classMetadata['path'] = []; // path to the properties of the class (should be the class alias)
         }
@@ -190,7 +189,8 @@ trait ClassMetadataTrait
                     'joinStrategy' => static::getJoinStrategyByPropertyAnnotation(
                         $class,
                         $associationName,
-                        $annotationReader
+                        $annotationReader,
+                        $depth
                     ),
                     'association' => $joinedAs . '.' . $associationName,
                     'alias' => $idx
@@ -216,6 +216,7 @@ trait ClassMetadataTrait
      * @param string $class
      * @param string $associationName
      * @param AnnotationReader $annotationReader
+     * @param int $depth
      * @param string $matchingStrategy
      * @return string
      * @throws \Throwable
@@ -224,9 +225,19 @@ trait ClassMetadataTrait
         string $class,
         string $associationName,
         AnnotationReader $annotationReader,
+        int $depth,
         string $matchingStrategy = NotBlank::class
     ): string
     {
+        /**
+         * we try be strict only at level one
+         * at deeper levels we should first track the nodes and use strict only the nodes before were strict as well
+         * but we don't do this. too much of a hustle
+         */
+        if ($depth > 0) {
+            return EntityQueryBuilderHelper::JOIN_STRATEGY_LEFT;
+        }
+
         $propertyReflection = new ReflectionProperty($class, $associationName);
         $propertyAnnotations = $annotationReader->getPropertyAnnotations($propertyReflection);
         $joinStrategy = EntityQueryBuilderHelper::JOIN_STRATEGY_LEFT;
