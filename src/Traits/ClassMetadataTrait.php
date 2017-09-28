@@ -94,8 +94,10 @@ trait ClassMetadataTrait
             $classMetadata['orderBy'] = null; // path to a hashed property
             $classMetadata['orderDir'] = static::$orderDir;
             $classMetadata['cols'] = []; // all properties & associations with their respective metadata
+            $classMetadata['cols_idx_raw'] = []; // store a copy of the col under idx_raw
             $classMetadata['cols_tt'] = []; // columns used by the table template engine
             $classMetadata['associations'] = [];
+            $classMetadata['associations_idx_raw'] = []; // store a copy of the associations under the idx_raw key
             $classMetadata['path_history'] = [];
             $classMetadata['path'] = []; // path to the properties of the class (should be the class alias)
         }
