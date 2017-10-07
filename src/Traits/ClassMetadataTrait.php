@@ -190,7 +190,7 @@ trait ClassMetadataTrait
                         $class,
                         $associationName,
                         $annotationReader,
-                        count($classMetadata['path']) - 1
+                        count($classMetadata['path']) - 1 // this should equal to 0
                     ),
                     'association' => $joinedAs . '.' . $associationName,
                     'alias' => $idx
