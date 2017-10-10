@@ -154,7 +154,7 @@ trait ClassMetadataTrait
                 'idx' => $idx,
                 'title' => $fieldMap['title'],
                 'showOnSearch' => true,
-                'selected' => !in_array($idx, $selectedIdxs, false)
+                'selected' => in_array($idx, $selectedIdxs, false)
             ];
         }
 
