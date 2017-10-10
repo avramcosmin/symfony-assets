@@ -141,7 +141,8 @@ trait EntityTrait
             $interval = $interval->format($format);
         }
 
-        return $interval ?: false;
+        // interval format can return 0 (int or string) and ?: will read this as false
+        return $interval ?? false;
     }
 
     /**
