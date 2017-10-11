@@ -55,8 +55,7 @@ trait DownloadTrait
         if ($deleteOnCompleted === true) {
             $response->deleteFileAfterSend(true);
         }
-
-        $response->send();
+        // $response->send();
 
         return $response;
     }
@@ -102,7 +101,7 @@ trait DownloadTrait
                 $fileName
             )
         );
-        $response->send();
+        // $response->send();
 
         return $response;
     }
@@ -130,7 +129,7 @@ trait DownloadTrait
                 $fileName
             )
         );
-        $response->send();
+        // $response->send();
 
         return $response;
     }
