@@ -165,10 +165,16 @@ trait CommandTrait
         return true;
     }
 
-    private function flush(): void
+    private function flushIteratedResult(): void
     {
         $this->em->flush();
         $this->em->clear();
+        gc_collect_cycles();
+    }
+
+    private function flushResult(): void
+    {
+        $this->em->flush();
         gc_collect_cycles();
     }
 
@@ -227,11 +233,11 @@ trait CommandTrait
                     }
                     if ($count % 15 === 0) {
                         $this->advanceProgressBar($progressBar, 15);
-                        $this->flush();
+                        $this->flushIteratedResult();
                     }
                     $count++;
                 }
-                $this->flush();
+                $this->flushIteratedResult();
                 $progressBar->finish();
                 $event = $stopwatch->stop($repository);
                 $this->writeInfo($output, "\n\r{$repository} successfully reconciled. Thank you!");
