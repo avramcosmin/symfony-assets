@@ -228,8 +228,13 @@ trait CommandTrait
                         $this->{'prePersist'}($output, $entity);
                         $this->em->persist($entity);
                     }
-                    if (!$this->validate($entity)) {
-                        continue;
+                    // if validation fails or throws exception we rollback any change on the entity
+                    try {
+                        if (!$this->validate($entity)) {
+                            $this->em->refresh($entity);
+                        }
+                    } catch (\Throwable $e) {
+                        $this->em->refresh($entity);
                     }
                     if ($count % 15 === 0) {
                         $this->advanceProgressBar($progressBar, 15);
