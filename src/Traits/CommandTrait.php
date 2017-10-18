@@ -235,6 +235,9 @@ trait CommandTrait
                         }
                     } catch (\Throwable $e) {
                         $this->em->refresh($entity);
+                        $this->log(
+                            '[Throwable] ' . $e->getMessage()
+                        );
                     }
                     if ($count % 15 === 0) {
                         $this->advanceProgressBar($progressBar, 15);
