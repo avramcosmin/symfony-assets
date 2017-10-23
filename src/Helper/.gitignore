@@ -9,6 +9,7 @@
 !EntityQueryBuilderHelper.php
 !FileHelper.php
 !GlobalHelper.php
+!MatrixGeneratorHelper.php
 !RequestHelper.php
 !ResponseHelper.php
 !SecurityHelper.php
