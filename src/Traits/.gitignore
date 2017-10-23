@@ -10,6 +10,7 @@
 !DownloadTrait.php
 !FileTrait.php
 !GlobalTrait.php
+!MatrixGeneratorTrait.php
 !RequestTrait.php
 !ResponseTrait.php
 !StringTrait.php
