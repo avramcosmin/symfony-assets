@@ -21,7 +21,7 @@ trait UpdatedAtTrait
     /**
      * Get updatedAt
      *
-     * @return \DateTime|null|string
+     * @return \DateTime|string
      */
     public function getUpdatedAt()
     {

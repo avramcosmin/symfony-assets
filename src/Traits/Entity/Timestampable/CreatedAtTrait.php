@@ -21,7 +21,7 @@ trait CreatedAtTrait
     /**
      * Get createdAt
      *
-     * @return \DateTime|null|string
+     * @return \DateTime|string
      */
     public function getCreatedAt()
     {

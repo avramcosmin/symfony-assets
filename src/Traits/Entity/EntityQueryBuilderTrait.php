@@ -108,6 +108,7 @@ trait EntityQueryBuilderTrait
 
         if ($forceSelectTheId === true) {
             $selects[] = $classMetadata['joinedAs'] . '.id AS _id';
+            $selects[] = '-1 AS RowNum';
         }
 
         foreach ($selectedIdxs as $selectedIdx) {
