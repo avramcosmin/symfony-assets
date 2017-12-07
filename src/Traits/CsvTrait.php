@@ -46,7 +46,7 @@ trait CsvTrait
         $response = [];
         foreach ($cols as $col) {
             $val = $accessor->getValue($entity, $col);
-            if (is_bool($val)) {
+            if (\is_bool($val)) {
                 $response[] = (filter_var($val, FILTER_VALIDATE_BOOLEAN) === false ? 'NO' : 'YES');
             } else if ($val instanceof \DateTime) {
                 $response[] = StringHelper::dateFormat($val);

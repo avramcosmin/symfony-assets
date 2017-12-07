@@ -61,7 +61,7 @@ class A0User implements UserInterface, EquatableInterface
      */
     public function isEqualTo(UserInterface $user): bool
     {
-        if (!$user instanceof A0User) {
+        if (!$user instanceof self) {
             return false;
         }
 

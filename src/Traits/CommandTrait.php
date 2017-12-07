@@ -101,7 +101,7 @@ trait CommandTrait
      */
     private function write(OutputInterface $output, $msg, $fg = 'black'): OutputInterface
     {
-        if (is_array($msg) !== true) {
+        if (\is_array($msg) !== true) {
             $msg = [$msg];
         }
 
@@ -150,7 +150,7 @@ trait CommandTrait
          * @var array $errors
          */
         $errors = $validator->validate($entity);
-        if (count($errors) > 0) {
+        if (\count($errors) > 0) {
             /**
              * @var ConstraintViolation $error
              */

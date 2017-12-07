@@ -131,7 +131,7 @@ trait CryptoTrait
     public static function toBase10($num, $b = 62)
     {
         $base = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $limit = strlen($num);
+        $limit = \strlen($num);
         $res = strpos($base, $num[0]);
         for ($i = 1; $i < $limit; $i++) {
             $res = $b * $res + strpos($base, $num[$i]);

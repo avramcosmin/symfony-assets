@@ -62,7 +62,7 @@ trait DatabaseExportTrait
 
         try {
             $cmd = 'bash '
-                . dirname(__DIR__) . '/../bin/database-dumper.sh'
+                . \dirname(__DIR__) . '/../bin/database-dumper.sh'
                 . ' -d ' . $options['database_name']
                 . ' -u ' . $options['database_user']
                 . ' -p\'' . $options['database_password'] . '\''

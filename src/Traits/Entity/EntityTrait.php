@@ -97,7 +97,7 @@ trait EntityTrait
     {
         $entityResource->{$method}($entity);
         $errors = $validator->validate($entity);
-        if (count($errors) > 0) {
+        if (\count($errors) > 0) {
             throw new ValidationFailedException($errors);
         }
 

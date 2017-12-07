@@ -10,7 +10,7 @@ trait StringTrait
      * Shorten a string to the desired length.
      *
      * @param $str
-     * @param int|\number $length
+     * @param int|float $length
      * @return string
      * @throws \Throwable
      */
@@ -21,7 +21,7 @@ trait StringTrait
         }
 
         if ($length > 255) {
-            throw new \Error('The length argument should be 255 or less.');
+            throw new \ErrorException('The length argument should be 255 or less.');
         }
 
         /**
@@ -44,7 +44,7 @@ trait StringTrait
             return $str;
         }
 
-        if (strlen($str) > $length) {
+        if (\strlen($str) > $length) {
             $str = mb_ereg_replace(
                 '^(.{1,' . $length . '})([^\s]+)(\s.*|$)',
                 '\\1\\2…',
@@ -115,7 +115,7 @@ trait StringTrait
      */
     public static function base64url_encode($str, bool $jsonEncode = false): string
     {
-        if (!is_string($str) && !is_array($str) && !$str instanceof \stdClass) {
+        if (!\is_string($str) && !\is_array($str) && !$str instanceof \stdClass) {
             throw new \ErrorException('`str` should be a string, array or at most an instance of \stdClass().');
         }
 

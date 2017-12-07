@@ -20,6 +20,7 @@ class HttpPutStreamListener
     /**
      * @param Request $request
      * @return array
+     * @throws \Throwable
      */
     public function getData(Request $request): array
     {
@@ -27,7 +28,7 @@ class HttpPutStreamListener
 
         $boundary = $this->boundary();
 
-        if (!count($boundary)) {
+        if (!\count($boundary)) {
             return [
                 'request' => $this->parse(),
                 'files' => []
@@ -85,10 +86,10 @@ class HttpPutStreamListener
 
             $block = $this->decide($value);
 
-            if (count($block['request']) > 0) {
+            if (\count($block['request']) > 0) {
                 $results['request'][] = $block['request'];
             }
-            if (count($block['files']) > 0) {
+            if (\count($block['files']) > 0) {
                 $results['files'][] = $block['files'];
             }
         }
@@ -147,7 +148,7 @@ class HttpPutStreamListener
 
         $image = preg_replace('/Content-Type: (.*)[^\n\r]/', '', $match[3]);
 
-        $path = sys_get_temp_dir() . '/php' . substr(sha1(rand()), 0, 6);
+        $path = sys_get_temp_dir() . '/php' . substr(sha1(mt_rand()), 0, 6);
 
         $err = file_put_contents($path, trim($image));
 
@@ -203,13 +204,13 @@ class HttpPutStreamListener
          */
         ['request' => $request, 'files' => $files] = $array;
 
-        if (count($request) > 0) {
+        if (\count($request) > 0) {
             foreach ($request as $key => $value) {
                 /**
                  * @var array $value
                  */
                 foreach ($value as $k => $v) {
-                    if (is_array($v)) {
+                    if (\is_array($v)) {
                         /**
                          * @var array $v
                          */
@@ -224,20 +225,20 @@ class HttpPutStreamListener
             $results['isEmptyPutStream'] = false;
         }
 
-        if (count($files) > 0) {
+        if (\count($files) > 0) {
             foreach ($files as $key => $value) {
                 /**
                  * @var array $value
                  */
                 foreach ($value as $k => $v) {
-                    if (is_array($v)) {
+                    if (\is_array($v)) {
                         /**
                          * @var array $v
                          */
                         foreach ($v as $kk => $vv) {
                             if (
-                                is_array($vv)
-                                && (count($vv) === 1)
+                                \is_array($vv)
+                                && (\count($vv) === 1)
                             ) {
                                 $results['files'][$k][$kk] = trim($vv[0]);
                             } else {

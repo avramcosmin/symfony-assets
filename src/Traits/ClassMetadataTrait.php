@@ -114,9 +114,9 @@ trait ClassMetadataTrait
             $idx_raw = $prefix . $fieldName;
 
             if (
-                in_array($fieldName, static::$exclusions, false)
+                \in_array($fieldName, static::$exclusions, false)
                 &&
-                !in_array($idx_raw, static::$forcedInclusions, false)
+                !\in_array($idx_raw, static::$forcedInclusions, false)
             ) {
                 continue;
             }
@@ -154,7 +154,7 @@ trait ClassMetadataTrait
                 'idx' => $idx,
                 'title' => $fieldMap['title'],
                 'showOnSearch' => true,
-                'selected' => in_array($idx, $selectedIdxs, false)
+                'selected' => \in_array($idx, $selectedIdxs, false)
             ];
         }
 
@@ -169,12 +169,12 @@ trait ClassMetadataTrait
                 if (
                     $accessor->getValue($instance, $associationName) instanceof ArrayCollection
                     ||
-                    in_array($associationName, $classMetadata['path'], false)
+                    \in_array($associationName, $classMetadata['path'], false)
                     ||
                     (
-                        !in_array($prefix . $associationName, static::$forcedInclusions, false)
+                        !\in_array($prefix . $associationName, static::$forcedInclusions, false)
                         &&
-                        in_array($associationName, static::$exclusions, false)
+                        \in_array($associationName, static::$exclusions, false)
                     )
                 ) {
                     continue;
@@ -190,7 +190,7 @@ trait ClassMetadataTrait
                         $class,
                         $associationName,
                         $annotationReader,
-                        count($classMetadata['path']) - 1 // this should equal to 0
+                        \count($classMetadata['path']) - 1 // this should equal to 0
                     ),
                     'association' => $joinedAs . '.' . $associationName,
                     'alias' => $idx
