@@ -19,17 +19,17 @@ composer require nelmio/cors-bundle
 Just add the following lines inside `app/config/services.yml`:
  
 ```yaml
-    mindlahus.v3.download_service:
+    mindlahus.v4.download_service:
         class: Mindlahus\SymfonyAssets\Service\DownloadService
         arguments: ["@service_container"]
-    mindlahus.v3.database_export_service:
+    mindlahus.v4.database_export_service:
         class: Mindlahus\SymfonyAssets\Service\DatabaseExportService
         arguments: ["@service_container"]
-    mindlahus.v3.exception_listener:
+    mindlahus.v4.exception_listener:
             class: Mindlahus\SymfonyAssets\EventListener\ExceptionListener
             tags:
                 - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
-    auth0.v3.jwt_auth_bundle:
+    auth0.v4.jwt_auth_bundle:
         class: Mindlahus\SymfonyAssets\Security\A0UserProvider
         arguments: ["@jwt_auth.auth0_service", '%jwt_auth.domain%']
 ```
@@ -60,7 +60,7 @@ This will help you connect your local `User` to the `user profile` made availabl
 To connect the listener to your app, just `copy/paste` the following snippet.
 
 ```yaml
-    mindlahus.v3.doctrine_extension_listener:
+    mindlahus.v4.doctrine_extension_listener:
         class: Mindlahus\SymfonyAssets\Listener\DoctrineExtensionListener
         calls:
             - [ setContainer, [ "@service_container" ] ]
