@@ -166,7 +166,7 @@ trait StringTrait
      * @param $val
      * @return float|null
      */
-    public static function isFloat($val):? float
+    public static function isFloat($val): ? float
     {
         // we do this because filter_var(true, FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_THOUSAND) returns 1
         if ($val === true) {
@@ -184,7 +184,7 @@ trait StringTrait
      * @param $val
      * @return bool|mixed
      */
-    public static function isInt($val):? int
+    public static function isInt($val): ? int
     {
         // we do this because filter_var(true, FILTER_VALIDATE_INT) returns 1
         if ($val === true) {
@@ -198,7 +198,7 @@ trait StringTrait
      * @param $val
      * @return null|\DateTime
      */
-    public static function isDateTime($val):? \DateTime
+    public static function isDateTime($val): ? \DateTime
     {
         if ($val instanceof \DateTime) {
             return $val;
@@ -212,15 +212,16 @@ trait StringTrait
     }
 
     /**
-     * @param string $str
+     * @param string|null|array $str
      * @param string $glue
      * @return string
+     * @throws \Throwable
      */
     public static function sanitizeString(string $str, string $glue = '_'): string
     {
         $str = Encoding::toUTF8($str);
 
-        if (function_exists('iconv')) {
+        if (\function_exists('iconv')) {
             $str = iconv('UTF-8', 'ASCII//TRANSLIT', $str);
         }
 
@@ -229,5 +230,22 @@ trait StringTrait
         $str = strtolower($str);
 
         return str_replace(' ', $glue, $str);
+    }
+
+    /**
+     * @param string|bool|array $str
+     * @param bool $implode
+     * @return array[]|false|string|string[]
+     * @throws \Throwable
+     */
+    public static function splitAtCapitalLetters(string $str, bool $implode = true)
+    {
+        $str = preg_split('/(?=[A-Z])/', $str, -1, PREG_SPLIT_NO_EMPTY);
+
+        if ($implode === true) {
+            return implode(' ', $str);
+        }
+
+        return $str;
     }
 }
